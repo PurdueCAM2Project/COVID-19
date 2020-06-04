@@ -8,6 +8,17 @@ import pickle
 
 
 """
+writers: 
+    Vishnu Banna
+
+Contact: 
+    DM cam2 slack: 
+        Vishnu Banna
+    email: 
+        vbanna@purdue.edu
+"""
+
+"""
 need to enable the API in the google cloud platform: 
 # move to team github
 
@@ -19,6 +30,8 @@ TODO:
     documentation
     
 """
+
+
 
 class validate():
     """

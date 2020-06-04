@@ -13,6 +13,21 @@ import matplotlib.pyplot as plt
 
 
 """
+original author: 
+    PlacesCNN to predict the scene category, attribute, and class activation map in a single pass
+    by Bolei Zhou, sep 2, 2017
+
+adaptor: 
+    Vishnu Banna
+
+Contact: 
+    DM cam2 slack: 
+        Vishnu Banna
+    email: 
+        vbanna@purdue.edu
+"""
+
+"""
 TODO: documentation
 """
 class SceneDetectionClass():
