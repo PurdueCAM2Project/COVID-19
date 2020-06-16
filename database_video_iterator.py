@@ -12,16 +12,16 @@ import numpy as np
 
 
 """
-writers: 
+Writers: 
     Vishnu Banna
-    Mohammed Metwaly
 
 Contact: 
     DM cam2 slack: 
         Vishnu Banna
     email: 
         vbanna@purdue.edu
-        mmetwaly@purdue.edu
+
+requires > 8gb of memory
 """
 
 """
