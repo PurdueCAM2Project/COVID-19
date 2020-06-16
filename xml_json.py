@@ -29,7 +29,7 @@ def xml_json(filename):
     """
     tree = ET.parse(filename)
     root = tree.getroot()
-    return {filename: jsonify(root)}
+    return jsonify(root)
 
 if __name__ == "__main__":
     print(xml_json("test1.xml"))
