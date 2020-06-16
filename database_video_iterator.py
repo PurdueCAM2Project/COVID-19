@@ -152,15 +152,23 @@ class database_video_iterator():
         
     def get_all_frames(self, image, url = True, folder_name = None):
         # name="http://vision.cs.luc.edu/~cv/videos/bcfe3110b5/2020-05-11_23_54_52.mp4"
+        print(folder_name)
         if image == None:
             return None
         if folder_name != None:
             image = f"{self.link}/{folder_name}/{image['href']}"
         # frames = []
-        image = imageio.get_reader(image)
+        #image = imageio.get_reader(image)
         #for i, frame in enumerate(image):
-        frames = list(image)
-        del image
+        #frames = list(image)
+        #del image
+        vidcap = cv2.VideoCapture(image)
+        success, frame = vidcap.read()
+        count = 0
+        while(success):
+             cv2.imwrite("frame%d.png" % count, frame)
+             success, image = vidcap.read()
+             count+=1
         return frames
 
     def get_arbitrary_images(self, get_img = False):
