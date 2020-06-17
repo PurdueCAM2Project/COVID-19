@@ -166,16 +166,21 @@ class database_video_iterator():
         count = 0
 
         while cap.isOpened():
-            success, frame = cap.read()
-            if success:
-                if filepath == None:
-                    cv2.imwrite("frame%d.png" % count, frame)
-                else:
-                    cv2.imwrite(f"{filepath}/frame{count}.png", frame)
+            if os.path.exists(f"{filepath}/frame{count}.png"):
                 count += iter_space
-                cap.set(1, count)
+                # cap.set(1, count)
+                print(f"{filepath}/frame{count}.png exists")
             else:
-                cap.release()
+                cap.set(1, count)
+                success, frame = cap.read()
+                if success:
+                    if filepath == None:
+                        cv2.imwrite("frame%d.png" % count, frame)
+                    else:
+                        cv2.imwrite(f"{filepath}/frame{count}.png", frame)
+                    count += iter_space
+                else:
+                    cap.release()
         return filepath
 
     def get_link(self, folder, image):
@@ -213,28 +218,30 @@ def save_movpeg(folder, image, number):
 if __name__ == "__main__":
     k = database_video_iterator()
     folder_names = k.folder_names
-    clear = True
+    clear = False
     print(folder_names)
 
-    if os.path.isdir(f"videos/"):
+    if not os.path.isdir(f"videos/"):
+        os.mkdir("videos")
+
+    else:
         if clear:
             os.system(f"rm -r videos/*")
             os.system(f"rmdir videos/*")
-    else:
-        os.mkdir("videos")
         
     for folder_name in folder_names:
-        os.mkdir(f"videos/{folder_name}")
+        if not os.path.isdir(f"videos/{folder_name}"):
+            os.mkdir(f"videos/{folder_name}")
         for cam, time in k.iterate_folder(folder_name = folder_name):
             try:
                 if cam != None:
                     fname = cam.split("/")[-1].split(".")[0]
                     path = f"videos/{folder_name}/{fname}"
-                    os.mkdir(path)
+                    if not os.path.isdir(path):
+                        os.mkdir(path)
                     image = k.get_all_frames(cam, filepath = f"videos/{folder_name}/{fname}", iter_space = 30)
             except KeyboardInterrupt:
                 raise
             except:
                 print(f"{time.text} skipped")
-            
 
