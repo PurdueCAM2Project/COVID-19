@@ -181,6 +181,8 @@ class database_video_iterator():
                     count += iter_space
                 else:
                     cap.release()
+        if cap.isOpen():
+            cap.release()
         return filepath
 
     def get_link(self, folder, image):
@@ -221,25 +223,26 @@ if __name__ == "__main__":
     clear = False
     print(folder_names)
 
-    if not os.path.isdir(f"videos/"):
-        os.mkdir("videos")
+    base_diectory = "videos/"
+    if not os.path.isdir(base_diectory):
+        os.mkdir(base_diectory)
 
     else:
         if clear:
-            os.system(f"rm -r videos/*")
-            os.system(f"rmdir videos/*")
+            os.system(f"rm -r {base_diectory}*")
+            os.system(f"rmdir {base_diectory}*")
         
     for folder_name in folder_names:
-        if not os.path.isdir(f"videos/{folder_name}"):
-            os.mkdir(f"videos/{folder_name}")
+        if not os.path.isdir(f"{base_diectory}{folder_name}"):
+            os.mkdir(f"{base_diectory}{folder_name}")
         for cam, time in k.iterate_folder(folder_name = folder_name):
             try:
                 if cam != None:
                     fname = cam.split("/")[-1].split(".")[0]
-                    path = f"videos/{folder_name}/{fname}"
+                    path = f"{base_diectory}{folder_name}/{fname}"
                     if not os.path.isdir(path):
                         os.mkdir(path)
-                    image = k.get_all_frames(cam, filepath = f"videos/{folder_name}/{fname}", iter_space = 30)
+                    image = k.get_all_frames(cam, filepath = f"{base_diectory}{folder_name}/{fname}", iter_space = 30)
             except KeyboardInterrupt:
                 raise
             except:
