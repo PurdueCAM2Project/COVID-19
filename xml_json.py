@@ -8,9 +8,9 @@ def jsonify(root):
             parsed[f"{child.tag}"] = [child.text]
         else:
             if f"{child.tag}" in parsed.keys():
-                parsed[f"{child.tag}"].append(json(children))
+                parsed[f"{child.tag}"].append(jsonify(children))
             else:
-                parsed[f"{child.tag}"] = [json(children)]
+                parsed[f"{child.tag}"] = [jsonify(children)]
     for item in parsed.keys():
         if len(parsed[item]) == 1:
             parsed[item] = parsed[item][0]
