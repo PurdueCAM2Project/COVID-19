@@ -9,11 +9,15 @@ from PIL import Image
 import cv2
 import imageio
 import numpy as np 
-
+import datetime as dt
+from multiprocessing import Process, current_process
+import sys
+import argparse
 
 """
 Writers: 
     Vishnu Banna
+    Isha Ghodgaonkar
 
 Contact: 
     DM cam2 slack: 
@@ -21,7 +25,6 @@ Contact:
     email: 
         vbanna@purdue.edu
 
-requires > 8gb of memory
 """
 
 """
@@ -217,13 +220,37 @@ def save_movpeg(folder, image, number):
         os.mkdir(f"videos/{folder}")
 
 
+
+def main(folder_names):
+    for folder_name in folder_names:
+
+        if not os.path.isdir(f"{base_diectory}{folder_name}"):
+            os.mkdir(f"{base_diectory}{folder_name}")
+        for cam, time in k.iterate_folder(folder_name=folder_name):
+            try:
+                if cam != None:
+                    fname = cam.split("/")[-1].split(".")[0]
+                    path = f"{base_diectory}{folder_name}/{fname}"
+                    if not os.path.isdir(path):
+                        os.mkdir(path)
+                    image = k.get_all_frames(cam, filepath=f"{base_diectory}{folder_name}/{fname}", iter_space=30)
+            except KeyboardInterrupt:
+                raise
+            except:
+                print(f"{time.text} skipped")
+
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Download all videos from Argonne')
+    parser.add_argument('--save_dir', type=str, default='videos/')
+    parser.add_argument('--num_workers', type=int, default=6)
+    arguments = parser.parse_args()
+
     k = database_video_iterator()
     folder_names = k.folder_names
     clear = False
-    print(folder_names)
 
-    base_diectory = "videos/"
+    base_diectory = arguments.save_dir
     if not os.path.isdir(base_diectory):
         os.mkdir(base_diectory)
 
@@ -231,20 +258,26 @@ if __name__ == "__main__":
         if clear:
             os.system(f"rm -r {base_diectory}*")
             os.system(f"rmdir {base_diectory}*")
-        
-    for folder_name in folder_names:
-        if not os.path.isdir(f"{base_diectory}{folder_name}"):
-            os.mkdir(f"{base_diectory}{folder_name}")
-        for cam, time in k.iterate_folder(folder_name = folder_name):
-            try:
-                if cam != None:
-                    fname = cam.split("/")[-1].split(".")[0]
-                    path = f"{base_diectory}{folder_name}/{fname}"
-                    if not os.path.isdir(path):
-                        os.mkdir(path)
-                    image = k.get_all_frames(cam, filepath = f"{base_diectory}{folder_name}/{fname}", iter_space = 30)
-            except KeyboardInterrupt:
-                raise
-            except:
-                print(f"{time.text} skipped")
+
+    worker_count = arguments.num_workers
+    how_many_folders = len(folder_names)
+    sub_length = int(how_many_folders / worker_count)
+
+    print('how many folders', how_many_folders)
+    worker_pool = []
+    for i in range(0, worker_count):
+        print('start', i*sub_length)
+        print('end',  i*sub_length + sub_length + 1 )
+        if i == worker_count:
+            p = Process(target=main, args=(folder_names[i * sub_length:],))
+        else:
+            p = Process(target=main, args=(folder_names[i*sub_length: i*sub_length + sub_length + 1],))
+        p.start()
+        worker_pool.append(p)
+
+    for p in worker_pool:
+        p.join()  # Wait for all of the workers to finish.
+
+    # Allow time to view results before program terminates.
+    a = input("Finished")  # raw_input(...) in Python 2.
 
