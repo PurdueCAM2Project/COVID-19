@@ -1,15 +1,11 @@
 import json
 import argparse
-import os
 import numpy as np
 import cv2
-from PIL import Image
-import matplotlib.pyplot as plt
-import imageio
 import torch
 
-from Data_Collection_Scene_Classification.database_iterator_30kcams import database_iterator
-from Data_Collection_Scene_Classification.scene_detection_30kcams import SceneDetectionClass
+from Tools.database_iterator_30kcams import database_iterator
+from Tools.scene_detection_30kcams import SceneDetectionClass
 from Pedestron.mmdet.apis import init_detector, inference_detector
 
 def all_same(i, image_link):

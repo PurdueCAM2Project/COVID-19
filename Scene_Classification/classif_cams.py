@@ -6,8 +6,8 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import imageio
 
-from database_iterator_30kcams import database_iterator
-from scene_detection_30kcams import SceneDetectionClass
+from Tools.database_iterator_30kcams import database_iterator
+from Tools.scene_detection_30kcams import SceneDetectionClass
 
 def brightness(image): 
     img = np.array(image.convert('RGB')) 
