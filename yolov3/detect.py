@@ -76,10 +76,11 @@ class Vehicle_Detector():
                 label = int(predictions[i][5])
                 coordinates = predictions[i][:4].reshape(1, -1)
                 object_ = self.names[label]
-                coordinates = list(scale_coords(
-                    img_.shape[2:], coordinates, im0s_.shape).round().cpu().detach().numpy()[0])
+                coordinates = scale_coords(img_.shape[2:], coordinates, im0s_.shape).round(
+                ).cpu().detach().numpy()[0].tolist()
                 if label in valid_labels:
-                    detections[(object_, confidence)] = coordinates
+                    key_ = object_+'-'+str(confidence)
+                    detections[key_] = coordinates
 
         if view_img:
             color = (0, 255, 0)
