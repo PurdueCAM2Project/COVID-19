@@ -15,7 +15,6 @@ import numpy as np
 writers: 
     Vishnu Banna
     Mohammed Metwaly
-
 Contact: 
     DM cam2 slack: 
         Vishnu Banna
@@ -27,14 +26,11 @@ Contact:
 """
 SAMPLE CODE:
 -----------
-
 i = database_iterator()
 print(f"total network cameras: {i.numcams}")
-
 for foldername, image_link, time in i.get_arbitrary_images():
     print(image_link, time)
     print(i.get_image(image_link).size)
-
 """
 class database_iterator():
     """
@@ -49,7 +45,6 @@ class database_iterator():
         
         input: 
             link: link to database
-
         return: 
             None
         """
@@ -68,7 +63,6 @@ class database_iterator():
         
         input: 
             None
-
         return: 
             folders: the list of soup objects for each folder/directory urls, in order of reading 
         """
@@ -88,7 +82,6 @@ class database_iterator():
         
         input: 
             directory: the image directory in the data base
-
         return: 
             files: the list of soup objects for each image url, in order of reading 
         """
@@ -107,7 +100,6 @@ class database_iterator():
         
         input: 
             directory: the image directory in the data base
-
         return: 
             files: the list of datas and times for each image, in order of reading 
         """
@@ -126,7 +118,6 @@ class database_iterator():
             image: the url or path to the image
             url: False if the image is on the device(PATH) and not a url link to the data base
             folder_name: the name of the folder in the database to pull from
-
         yeild:  
             image: the image pill object  
         """
@@ -277,7 +268,30 @@ class database_iterator():
                 for image in self.imgs:
                     links.append(f"{self.link}{folder_name}{image['href']}")
                 yield folder_name, links, self.dtms
+                
+    def get_subset_images(self, get_img = False, cam_list=None):
+        """ Specify a subset of cameras to yield folders, links, dtms for
+        """
+        #for folder in self.folders:
+        #    folder_name = folder["href"]
+        #    if folder_name not in cam_list:
+        #        continue
+        for folder_name in cam_list:
+            self.imgs = self.get_images(folder_name)
+            self.dtms = self.get_datetimes(folder_name)
 
+            print(len(self.imgs), len(self.dtms))
+            if get_img:
+                images = []
+                for image in self.imgs:
+                    link = f"{self.link}{folder_name}{image['href']}"
+                    images.append(self.get_image(link))
+                yield folder_name, images, self.dtms
+            else:
+                links = []
+                for image in self.imgs:
+                    links.append(f"{self.link}{folder_name}{image['href']}")
+                yield folder_name, links, self.dtms
 
 import requests
 import os
@@ -296,7 +310,6 @@ import numpy as np
 writers: 
     Vishnu Banna
     Mohammed Metwaly
-
 Contact: 
     DM cam2 slack: 
         Vishnu Banna
@@ -308,14 +321,11 @@ Contact:
 """
 SAMPLE CODE:
 -----------
-
 i = database_iterator()
 print(f"total network cameras: {i.numcams}")
-
 for foldername, image_link, time in i.get_arbitrary_images():
     print(image_link, time)
     print(i.get_image(image_link).size)
-
 """
 class database_video_iterator():
     """
@@ -330,7 +340,6 @@ class database_video_iterator():
         
         input: 
             link: link to database
-
         return: 
             None
         """
@@ -349,7 +358,6 @@ class database_video_iterator():
         
         input: 
             None
-
         return: 
             folders: the list of soup objects for each folder/directory urls, in order of reading 
         """
@@ -371,7 +379,6 @@ class database_video_iterator():
         
         input: 
             directory: the image directory in the data base
-
         return: 
             files: the list of soup objects for each image url, in order of reading 
         """
@@ -390,7 +397,6 @@ class database_video_iterator():
         
         input: 
             directory: the image directory in the data base
-
         return: 
             files: the list of datas and times for each image, in order of reading 
         """
@@ -409,7 +415,6 @@ class database_video_iterator():
             image: the url or path to the image
             url: False if the image is on the device(PATH) and not a url link to the data base
             folder_name: the name of the folder in the database to pull from
-
         yeild:  
             image: the image pill object  
         """
