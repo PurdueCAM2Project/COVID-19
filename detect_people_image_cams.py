@@ -39,7 +39,7 @@ def all_same(i, image_link):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='MMDet test detector')
     parser.add_argument('--config', help='test config file path', default='Pedestron/configs/elephant/cityperson/cascade_hrnet.py')
-    parser.add_argument('--checkpoint', help='checkpoint file', default='/local/a/cam2/data/covid19/models_pretrained/epoch_19.pth.stu')
+    parser.add_argument('--checkpoint', help='checkpoint file', default='Pedestron/pre_trained_models/epoch_19.pth.stu')
     args = parser.parse_args()
 
     i = database_iterator()
