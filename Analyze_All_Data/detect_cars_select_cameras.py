@@ -108,7 +108,9 @@ if __name__ == "__main__":
             print("All images are same for this camera. Skipping...")
         if len(image_links) > 0 and not check:
             for j in range(len(image_links)):
+                print(j)
                 image_link = image_links[j]
+                print(image_link)
                 img = np.array(i.get_image(image_link).convert('RGB'))
                 results = vehicle_detector.detect(img, view_img=False)
                 detections[foldername][image_link] = results
