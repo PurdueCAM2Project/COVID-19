@@ -1,7 +1,7 @@
 import json
 import matplotlib.pyplot as plt
 
-filename = 'person_detections'
+filename = 'vehicle_detections.json'
 
 with open(filename, 'r') as detections:
     d = json.load(detections)
@@ -16,8 +16,8 @@ for cam_id in d.keys():
     for image_name in d[cam_id]:
         counts[image_name] = 0
         for detection in d[cam_id][image_name]:
-            if float(detection) > 0.3:
-                counts[image_name] += 1
+            # if float(detection) > 0.3:
+            counts[image_name] += 1
     all_counts[cam_id] = counts
 #print(counts)
 
@@ -27,5 +27,5 @@ for key in all_counts.keys():
     for each in all_counts[key]:
         l.append(all_counts[key][each])
     print(l)
-    plt.plot(l)
-    plt.savefig(key.split('/')[0])
+    plt.stem(l, use_line_collection=True)
+    plt.savefig('plots/'+key.split('/')[0])
