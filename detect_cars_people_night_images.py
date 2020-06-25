@@ -112,10 +112,9 @@ def main(subset_all_images):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='MMDet test detector')
+    parser = argparse.ArgumentParser(description='Main script to run car, people, day night detection')
     parser.add_argument('--config', help='test config file path', default='Pedestron/configs/elephant/cityperson/cascade_hrnet.py')
-    parser.add_argument('--checkpoint', help='checkpoint file', default='Pedestron/pre_trained_models/epoch_19.pth.stu')
-    parser = argparse.ArgumentParser(description='YOLO People Detector')
+    parser.add_argument('--checkpoint', help='checkpoint file', default='/local/a/cam2/data/covid19/models_pretrained/epoch_19.pth.stu')
     parser.add_argument('--cfg', type=str,
                         default='yolov3/cfg/yolov3-spp.cfg', help='*.cfg path')
     parser.add_argument('--names', type=str,
