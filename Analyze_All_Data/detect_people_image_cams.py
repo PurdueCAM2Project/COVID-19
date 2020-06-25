@@ -73,6 +73,12 @@ if __name__ == "__main__":
                 pil_image = (i.get_image(image_link[j]))
                 #img = cv2.imread(i.get_image(image_link[0]))
                 img = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+
+                # call
+                # day vs night classification
+                # day_night[foldername][image_link[j]] = 'night'
+
+
                 results = inference_detector(model, img)
                 if isinstance(results, tuple):
                     bbox_result, segm_result = results
