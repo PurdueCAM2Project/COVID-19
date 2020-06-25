@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import torch
 import sys
+import re
 import os
 from multiprocessing import Process, current_process
 
@@ -71,9 +72,6 @@ def main(subset_all_images, process_num):
 
 
     for foldername, image_link, time in subset_all_images:
-
-        print(foldername)
-
         person_detections[foldername] = dict()
         vehicle_detections[foldername] = dict()
 
@@ -166,8 +164,11 @@ if __name__ == "__main__":
     counter = True  # False
 
 
+
     worker_count = args.num_workers
-    all_images = list(i.get_all_images())
+    all_images = [re.search("(.*?)", n) for n in i.folders]
+    print(all_images[0])
+    print(len(all_images))
     how_many_cams = len(all_images)
     num_folders_per_job = int(how_many_cams / worker_count)
 
