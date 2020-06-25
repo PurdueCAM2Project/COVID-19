@@ -1,9 +1,12 @@
 import json
+import os
 import argparse
 import numpy as np
 import cv2
 import torch
 import glob
+from PIL import Image
+
 
 from Tools.database_iterator_30kcams import database_iterator
 from Tools.scene_detection_30kcams import SceneDetectionClass
@@ -40,7 +43,7 @@ def all_same(i, image_link):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='MMDet test detector')
     parser.add_argument('--config', help='test config file path', default='Pedestron/configs/elephant/cityperson/cascade_hrnet.py')
-    parser.add_argument('--checkpoint', help='checkpoint file', default='Pedestron/pre_trained_models/epoch_19.pth.stu')
+    parser.add_argument('--checkpoint', help='checkpoint file', default='/local/a/cam2/data/covid19/models_pretrained/epoch_19.pth.stu')
     args = parser.parse_args()
 
     i = database_iterator()
@@ -62,12 +65,12 @@ if __name__ == "__main__":
 
     for cam in list_cams:
         detections[cam] = dict()
-        for foldername in glob.glob(cam):
-            print(foldername)
-            detections[cam][foldername] = dict()
-
-            for :
-                pil_image = (i.get_image(image_link[j]))
+        for date in os.listdir(path + cam):
+            print(date)
+            detections[cam][date] = dict()
+            for image in os.listdir(path + cam + date):
+                detections[cam][date][image] = dict()
+                pil_image = Image.open(path + cam + date + '/' + image)
                 #img = cv2.imread(i.get_image(image_link[0]))
                 img = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
                 results = inference_detector(model, img)
@@ -80,9 +83,9 @@ if __name__ == "__main__":
                 bbox_dict = dict()
                 for each in bboxes:
                     bbox_dict[each[4]] = each[0:4]
+                
+                detections[cam][date][image] = bbox_dict
 
-                detections[cam][foldername][image_link[j]] = bbox_dict
-
-    f = open("person_detections", "w")
-    f.write(json.dumps(detections))
-    f.close()
+        f = open("person_detections_video" + cam.strip('/') , "w+")
+        f.write(json.dumps(detections))
+        f.close()
