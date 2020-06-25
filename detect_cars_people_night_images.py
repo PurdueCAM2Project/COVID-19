@@ -47,7 +47,7 @@ def all_same(i, image_link):
             return False
     return False
 
- def determine_day_night(image):  # determines whether or not an image is captured during the day or night
+def determine_day_night(image):  # determines whether or not an image is captured during the day or night
     # 0 denotes night, 1 denotes day
     if np.mean(image) > 60:
         # this image was taken during the day
