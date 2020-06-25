@@ -59,7 +59,10 @@ if __name__ == "__main__":
     detections = dict()
     path = '/local/a/cam2/data/covid19/video_data/'
     count = 0
-    list_cams = ['h092zALqYg', '0369289ba3', '113644aeaa', 'Sm7vwNhHoV', 'h5SGg1wbzT', 'U7REmkvwZs', '1yY7h9xkXt', '4mKEIb96LV', 'OVZjQQIIYf']
+
+    list_cams = os.listdir(path)
+
+    #list_cams = ['h092zALqYg', '0369289ba3', '113644aeaa', 'Sm7vwNhHoV', 'h5SGg1wbzT', 'U7REmkvwZs', '1yY7h9xkXt', '4mKEIb96LV', 'OVZjQQIIYf']
 
     list_cams = [k + '/' for k in list_cams]
 

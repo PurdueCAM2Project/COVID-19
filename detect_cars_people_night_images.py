@@ -5,6 +5,7 @@ import cv2
 import torch
 import sys
 import os
+from multiprocessing import Process, current_process
 
 # add the path ../ to import functions from the Pedestron module
 sys.path.append("../")
@@ -53,59 +54,8 @@ def all_same(i, image_link):
         return 1
     return 0
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='MMDet test detector')
-    parser.add_argument('--config', help='test config file path', default='Pedestron/configs/elephant/cityperson/cascade_hrnet.py')
-    parser.add_argument('--checkpoint', help='checkpoint file', default='Pedestron/pre_trained_models/epoch_19.pth.stu')
-    parser = argparse.ArgumentParser(description='YOLO People Detector')
-    parser.add_argument('--cfg', type=str,
-                        default='yolov3/cfg/yolov3-spp.cfg', help='*.cfg path')
-    parser.add_argument('--names', type=str,
-                        default='yolov3/data/coco.names', help='*.names path')
-    parser.add_argument('--weights', type=str,
-                        default='yolov3/weights/yolov3-spp-ultralytics.pt', help='weights path')
-    # input file/folder, 0 for webcam
-    parser.add_argument('--img-size', type=int, default=512,
-                        help='inference size (pixels)')
-    parser.add_argument('--conf-thres', type=float,
-                        default=0.2, help='object confidence threshold')
-    parser.add_argument('--iou-thres', type=float,
-                        default=0.3, help='IOU threshold for NMS')
-    parser.add_argument('--half', action='store_true',
-                        help='half precision FP16 inference')
-    parser.add_argument('--device', default='0',
-                        help='device id (i.e. 0 or 0,1) or cpu')
-    parser.add_argument('--save-path', default='results',
-                        help='directory to save results')
-    args = parser.parse_args()
-
-    directory_exists = os.path.isdir(args.save_path)
-    if not directory_exists:
-        os.mkdir(args.save_path)
-
-    i = database_iterator()
-    x = SceneDetectionClass()
-    print(f"total network cameras: {i.numcams}")
-    cam_list_pred = dict()
-    num_rand = 1
-    counter = True  # False
-
-    person_model = init_detector(
-        args.config, args.checkpoint, device=torch.device('cuda:0'))
-
-    vehicle_detector = Vehicle_Detector(weights=args.weights, cfg=args.cfg, names=args.names, iou_thres=args.iou_thres,
-                                        conf_thres=args.conf_thres, imgsz=args.img_size, half=args.half, device_id=args.device)
-
-    person_detections = dict()
-    day_night = dict()
-    vehicle_detections = dict()
-
-    vehicle_filename = os.path.join(args.save_path, "vehicle_detections.json")
-    person_filename = os.path.join(args.save_path, "person_detections.json")
-
-    count = 0
-
-    for foldername, image_link, time in i.get_all_images():
+def main(subset_all_images):
+    for foldername, image_link, time in subset_all_images:
 
         print(foldername)
 
@@ -160,5 +110,79 @@ if __name__ == "__main__":
             f.write(json.dumps(person_detections))
             f.close()
 
-            count += 1
-            print(f"{count} out of {i.numcams} cameras done.")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='MMDet test detector')
+    parser.add_argument('--config', help='test config file path', default='Pedestron/configs/elephant/cityperson/cascade_hrnet.py')
+    parser.add_argument('--checkpoint', help='checkpoint file', default='Pedestron/pre_trained_models/epoch_19.pth.stu')
+    parser = argparse.ArgumentParser(description='YOLO People Detector')
+    parser.add_argument('--cfg', type=str,
+                        default='yolov3/cfg/yolov3-spp.cfg', help='*.cfg path')
+    parser.add_argument('--names', type=str,
+                        default='yolov3/data/coco.names', help='*.names path')
+    parser.add_argument('--weights', type=str,
+                        default='yolov3/weights/yolov3-spp-ultralytics.pt', help='weights path')
+    # input file/folder, 0 for webcam
+    parser.add_argument('--img-size', type=int, default=512,
+                        help='inference size (pixels)')
+    parser.add_argument('--conf-thres', type=float,
+                        default=0.2, help='object confidence threshold')
+    parser.add_argument('--iou-thres', type=float,
+                        default=0.3, help='IOU threshold for NMS')
+    parser.add_argument('--half', action='store_true',
+                        help='half precision FP16 inference')
+    parser.add_argument('--device', default='0',
+                        help='device id (i.e. 0 or 0,1) or cpu')
+    parser.add_argument('--save-path', default='results',
+                        help='directory to save results')
+    parser.add_argument('--num_workers', type=int, default=6)
+
+    args = parser.parse_args()
+
+    directory_exists = os.path.isdir(args.save_path)
+    if not directory_exists:
+        os.mkdir(args.save_path)
+
+    i = database_iterator()
+    x = SceneDetectionClass()
+    print(f"total network cameras: {i.numcams}")
+    cam_list_pred = dict()
+    num_rand = 1
+    counter = True  # False
+
+    person_model = init_detector(
+        args.config, args.checkpoint, device=torch.device('cuda:0'))
+
+    vehicle_detector = Vehicle_Detector(weights=args.weights, cfg=args.cfg, names=args.names, iou_thres=args.iou_thres,
+                                        conf_thres=args.conf_thres, imgsz=args.img_size, half=args.half, device_id=args.device)
+
+    person_detections = dict()
+    day_night = dict()
+    vehicle_detections = dict()
+
+    vehicle_filename = os.path.join(args.save_path, "vehicle_detections.json")
+    person_filename = os.path.join(args.save_path, "person_detections.json")
+
+    count = 0
+
+
+    worker_count = args.num_workers
+    all_images = list(i.get_all_images())
+    how_many_cams = len(all_images)
+    num_folders_per_job = int(how_many_cams / worker_count)
+
+    worker_pool = []
+    for i in range(0, worker_count):
+        print('start', i*num_folders_per_job)
+        print('end',  i*num_folders_per_job + num_folders_per_job + 1 )
+        if i == worker_count:
+            p = Process(target=main, args=(all_images[i * num_folders_per_job:],))
+        else:
+            p = Process(target=main, args=(all_images[i * num_folders_per_job: i * num_folders_per_job + num_folders_per_job + 1],))
+        p.start()
+        worker_pool.append(p)
+
+    for p in worker_pool:
+        p.join()
+
+
