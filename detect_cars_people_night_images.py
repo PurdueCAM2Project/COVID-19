@@ -54,7 +54,22 @@ def determine_day_night(image):  # determines whether or not an image is capture
         return 1
     return 0
 
-def main(subset_all_images):
+def main(subset_all_images, process_num):
+
+    person_model = init_detector(
+        args.config, args.checkpoint, device=torch.device('cuda:0'))
+
+    vehicle_detector = Vehicle_Detector(weights=args.weights, cfg=args.cfg, names=args.names, iou_thres=args.iou_thres,
+                                        conf_thres=args.conf_thres, imgsz=args.img_size, half=args.half, device_id=args.device)
+
+    person_detections = dict()
+    day_night = dict()
+    vehicle_detections = dict()
+
+    vehicle_filename = os.path.join(args.save_path, "vehicle_detections_" + process_num + ".json")
+    person_filename = os.path.join(args.save_path, "person_detections_" + process_num + ".json")
+
+
     for foldername, image_link, time in subset_all_images:
 
         print(foldername)
@@ -150,21 +165,6 @@ if __name__ == "__main__":
     num_rand = 1
     counter = True  # False
 
-    person_model = init_detector(
-        args.config, args.checkpoint, device=torch.device('cuda:0'))
-
-    vehicle_detector = Vehicle_Detector(weights=args.weights, cfg=args.cfg, names=args.names, iou_thres=args.iou_thres,
-                                        conf_thres=args.conf_thres, imgsz=args.img_size, half=args.half, device_id=args.device)
-
-    person_detections = dict()
-    day_night = dict()
-    vehicle_detections = dict()
-
-    vehicle_filename = os.path.join(args.save_path, "vehicle_detections.json")
-    person_filename = os.path.join(args.save_path, "person_detections.json")
-
-    count = 0
-
 
     worker_count = args.num_workers
     all_images = list(i.get_all_images())
@@ -176,9 +176,9 @@ if __name__ == "__main__":
         print('start', i*num_folders_per_job)
         print('end',  i*num_folders_per_job + num_folders_per_job + 1 )
         if i == worker_count:
-            p = Process(target=main, args=(all_images[i * num_folders_per_job:],))
+            p = Process(target=main, args=(all_images[i * num_folders_per_job:], i))
         else:
-            p = Process(target=main, args=(all_images[i * num_folders_per_job: i * num_folders_per_job + num_folders_per_job + 1],))
+            p = Process(target=main, args=(all_images[i * num_folders_per_job: i * num_folders_per_job + num_folders_per_job + 1], i))
         p.start()
         worker_pool.append(p)
 
