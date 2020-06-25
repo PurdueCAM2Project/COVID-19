@@ -72,10 +72,6 @@ def main(subset_all_images, process_num):
 
     for foldername, image_link, time in subset_all_images:
 
-        print(foldername)
-
-        person_detections[foldername] = dict()
-        vehicle_detections[foldername] = dict()
 
         check = all_same(i, image_link)
 
