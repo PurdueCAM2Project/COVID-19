@@ -59,23 +59,24 @@ def determine_day_night(image):  # determines whether or not an image is capture
 def main(person_model, vehicle_detector, subset_all_images, process_num):
     i = database_iterator()
 
+    person_detections = dict()
+    day_night = dict()
+    vehicle_detections = dict()
     vehicle_filename = os.path.join(args.save_path, "vehicle_detections_" + str(process_num) + ".json")
     person_filename = os.path.join(args.save_path, "person_detections_" + str(process_num) + ".json")
     day_night_filename = os.path.join(args.save_path, "day_night_" + str(process_num) + ".json")
 
 
     for foldername, image_link, time in i.get_subset_images(cam_list=subset_all_images):
-        person_detections = dict()
-        day_night = dict()
-        vehicle_detections = dict()
+        print(foldername)
         person_detections[foldername] = dict()
-        vehicle_detections[foldername] = dict()
         day_night[foldername] = dict()
 
         check = all_same(i, image_link)
 
         if len(image_link) > 0 and not check:
             for j in range(len(image_link)):
+                print(j)
                 pil_image = (i.get_image(image_link[j]))
                 img = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
 
@@ -101,21 +102,22 @@ def main(person_model, vehicle_detector, subset_all_images, process_num):
 
                 person_detections[foldername][image_link[j]] = bbox_dict
 
-
+                """
                 # vehicle detection
                 img = np.array(pil_image.convert('RGB'))
                 results = vehicle_detector.detect(img, view_img=False)
                 vehicle_detections[foldername][image_link[j]] = results
    #             if j % 20 == 19:
     #                print(f"{j + 1} done out of {len(image_link)} images")
-
+            """
 
             # write to the file at the end of every camera instead of when the entire process is complete
             # Helps if it gets disconnected in between
-
+            """
             f = open(vehicle_filename, "w+")
             f.write(json.dumps(vehicle_detections))
             f.close()
+            """
 
             f = open(person_filename, "w+")
             f.write(json.dumps(person_detections))
@@ -174,9 +176,9 @@ if __name__ == "__main__":
     person_model = init_detector(
         args.config, args.checkpoint, device=torch.device('cuda:0'))
 
-    vehicle_detector = Vehicle_Detector(weights=args.weights, cfg=args.cfg, names=args.names, iou_thres=args.iou_thres,
-                     conf_thres=args.conf_thres, imgsz=args.img_size, half=args.half, device_id=args.device)
-    
+    #vehicle_detector = Vehicle_Detector(weights=args.weights, cfg=args.cfg, names=args.names, iou_thres=args.iou_thres,
+       #              conf_thres=args.conf_thres, imgsz=args.img_size, half=args.half, device_id=args.device)
+    vehicle_detector=None
     worker_pool = []
     if args.multiprocessing:
 
@@ -193,6 +195,7 @@ if __name__ == "__main__":
         for p in worker_pool:
             p.join()
     else:
+        print(i)
         for i in range(0, worker_count):
             if i == worker_count-1:
                 main(person_model, vehicle_detector, all_images[i * num_folders_per_job:], i)
