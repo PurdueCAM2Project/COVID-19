@@ -3,6 +3,7 @@ import argparse
 import numpy as np
 import cv2
 import torch
+import glob
 import sys
 
 # add the path ../ to import functions from the Pedestron module
@@ -58,18 +59,19 @@ if __name__ == "__main__":
         args.config, args.checkpoint, device=torch.device('cuda:0'))
 
     detections = dict()
-
+    path = '/local/a/cam2/data/covid19/video_data/'
     count = 0
-    list_cams = ['5b194a7973569e00045d0afa', '5b194a8773569e00045d0b33', '5b194a9573569e00045d0b69', '5b19491873569e00045d0524', '5b0d3ee884d57c0004cba658', '5b0d3f7284d57c0004cba6e5', '5b19489a73569e00045d0305', '5b19788d73569e00045dc9e8', '5b19768e73569e00045db92a', '5b19726d73569e00045d9c4f', '5b0d3eb084d57c0004cba61e']
-    list_cams = [k + '/' for k in list_cams]
-    for foldername, image_link, time in i.get_subset_images(cam_list=list_cams):
-        print(foldername)
-        detections[foldername] = dict()
+    list_cams = ['h092zALqYg', '0369289ba3', '113644aeaa', 'Sm7vwNhHoV', 'h5SGg1wbzT', 'U7REmkvwZs', '1yY7h9xkXt', '4mKEIb96LV', 'OVZjQQIIYf']
 
-        check = all_same(i, image_link)
-        print(check)
-        if len(image_link) > 0 and not check:
-            for j in range(len(image_link)):
+    list_cams = [k + '/' for k in list_cams]
+
+    for cam in list_cams:
+        detections[cam] = dict()
+        for foldername in glob.glob(cam):
+            print(foldername)
+            detections[cam][foldername] = dict()
+
+            for :
                 pil_image = (i.get_image(image_link[j]))
                 #img = cv2.imread(i.get_image(image_link[0]))
                 img = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
@@ -84,7 +86,7 @@ if __name__ == "__main__":
                 for each in bboxes:
                     bbox_dict[each[4]] = each[0:4]
 
-                detections[foldername][image_link[j]] = bbox_dict
+                detections[cam][foldername][image_link[j]] = bbox_dict
 
     f = open("person_detections", "w")
     f.write(json.dumps(detections))
