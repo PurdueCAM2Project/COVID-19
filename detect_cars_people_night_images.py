@@ -6,7 +6,8 @@ import torch
 import sys
 import re
 import os
-from pathos.multiprocessing import ProcessingPool as Pool
+#from pathos.multiprocessing import ProcessPool
+from torch.multiprocessing import Process
 
 # add the path ../ to import functions from the Pedestron module
 sys.path.append("../")
@@ -27,7 +28,7 @@ def all_same(i, image_link):
 
         img3 = image_link[len(image_link)//4]
         img4 = image_link[len(image_link)*3//4]
-
+        print(img1)
         img1 = np.array(i.get_image(img1).convert('RGB'))
         img2 = np.array(i.get_image(img2).convert('RGB'))
 
@@ -56,21 +57,20 @@ def determine_day_night(image):  # determines whether or not an image is capture
     return 0
 
 def main(person_model, vehicle_detector, subset_all_images, process_num):
-
     i = database_iterator()
-    person_detections = dict()
-    day_night = dict()
-    vehicle_detections = dict()
 
-    vehicle_filename = os.path.join(args.save_path, "vehicle_detections_" + process_num + ".json")
-    person_filename = os.path.join(args.save_path, "person_detections_" + process_num + ".json")
-    day_night_filename = os.path.join(args.save_path, "day_night_" + process_num + ".json")
+    vehicle_filename = os.path.join(args.save_path, "vehicle_detections_" + str(process_num) + ".json")
+    person_filename = os.path.join(args.save_path, "person_detections_" + str(process_num) + ".json")
+    day_night_filename = os.path.join(args.save_path, "day_night_" + str(process_num) + ".json")
 
 
-    for foldername, image_link, time in i.get_subset_images(subset_all_images):
-
+    for foldername, image_link, time in i.get_subset_images(cam_list=subset_all_images):
+        person_detections = dict()
+        day_night = dict()
+        vehicle_detections = dict()
         person_detections[foldername] = dict()
         vehicle_detections[foldername] = dict()
+        day_night[foldername] = dict()
 
         check = all_same(i, image_link)
 
@@ -103,10 +103,11 @@ def main(person_model, vehicle_detector, subset_all_images, process_num):
 
 
                 # vehicle detection
+                img = np.array(pil_image.convert('RGB'))
                 results = vehicle_detector.detect(img, view_img=False)
-                vehicle_detections[foldername][image_link] = results
-                if j % 20 == 19:
-                    print(f"{j + 1} done out of {len(image_link)} images")
+                vehicle_detections[foldername][image_link[j]] = results
+   #             if j % 20 == 19:
+    #                print(f"{j + 1} done out of {len(image_link)} images")
 
 
             # write to the file at the end of every camera instead of when the entire process is complete
@@ -149,7 +150,7 @@ if __name__ == "__main__":
     parser.add_argument('--save-path', default='results',
                         help='directory to save results')
     parser.add_argument('--num_workers', type=int, default=6)
-
+    parser.add_argument('--multiprocessing', default=False)
     args = parser.parse_args()
 
     directory_exists = os.path.isdir(args.save_path)
@@ -162,36 +163,47 @@ if __name__ == "__main__":
     num_rand = 1
     counter = True  # False
 
-
     torch.multiprocessing.set_start_method('spawn')
 
     worker_count = args.num_workers
     p = re.compile("\"(.*?)\"")
-    all_images = [p.search(str(n)).group(0).strip("\"/") for n in i.folders]
-    print(all_images[0])
-    print(all_images)
-    print(len(all_images))
+    all_images = [p.search(str(n)).group(0).strip("\"") for n in i.folders]
     
     how_many_cams = len(all_images)
     num_folders_per_job = int(how_many_cams / worker_count)
     person_model = init_detector(
         args.config, args.checkpoint, device=torch.device('cuda:0'))
 
-   # vehicle_detector = Vehicle_Detector(weights=args.weights, cfg=args.cfg, names=args.names, iou_thres=args.iou_thres,
-                      #                  conf_thres=args.conf_thres, imgsz=args.img_size, half=args.half, device_id=args.device)
-    vehicle_detector = None
+    vehicle_detector = Vehicle_Detector(weights=args.weights, cfg=args.cfg, names=args.names, iou_thres=args.iou_thres,
+                     conf_thres=args.conf_thres, imgsz=args.img_size, half=args.half, device_id=args.device)
+    
     worker_pool = []
+    if args.multiprocessing:
+
+        for i in range(0, worker_count):
+            print('start', i*num_folders_per_job)
+            print('end',  i*num_folders_per_job + num_folders_per_job + 1 )
+            if i == worker_count-1:
+                p = Process(target=main, args=(person_model, vehicle_detector, all_images[i * num_folders_per_job:], i))
+            else:
+                p = Process(target=main, args=(person_model, vehicle_detector, all_images[i * num_folders_per_job: i * num_folders_per_job + num_folders_per_job + 1], i))
+            p.start()
+            worker_pool.append(p)
+
+        for p in worker_pool:
+            p.join()
+    else:
+        for i in range(0, worker_count):
+            if i == worker_count-1:
+                main(person_model, vehicle_detector, all_images[i * num_folders_per_job:], i)
+            else:
+                main(person_model, vehicle_detector, all_images[i * num_folders_per_job: i * num_folders_per_job + num_folders_per_job + 1], i)
+
+    """
+    pool = ProcessPool(nodes = worker_count) 
     for i in range(0, worker_count):
-        print('start', i*num_folders_per_job)
-        print('end',  i*num_folders_per_job + num_folders_per_job + 1 )
         if i == worker_count:
-            p = Process(target=main, args=(person_model, vehicle_detector, all_images[i * num_folders_per_job:], i))
+            pool.pipe(main,person_model, vehicle_detector, all_images[i * num_folders_per_job:], i)
         else:
-            p = Process(target=main, args=(person_model, vehicle_detector, all_images[i * num_folders_per_job: i * num_folders_per_job + num_folders_per_job + 1], i))
-        p.start()
-        worker_pool.append(p)
-
-    for p in worker_pool:
-        p.join()
-
-
+            pool.pipe(main, person_model, vehicle_detector, all_images[i * num_folders_per_job: i * num_folders_per_job + num_folders_per_job + 1], i)
+    """

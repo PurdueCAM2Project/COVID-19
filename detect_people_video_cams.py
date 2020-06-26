@@ -49,9 +49,10 @@ def determine_day_night(image):  # determines whether or not an image is capture
     return 0
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='MMDet test detector')
+    parser = argparse.ArgumentParser(description='Run person detections on all videos')
     parser.add_argument('--config', help='test config file path', default='Pedestron/configs/elephant/cityperson/cascade_hrnet.py')
     parser.add_argument('--checkpoint', help='checkpoint file', default='/local/a/cam2/data/covid19/models_pretrained/epoch_19.pth.stu')
+    parser.add_argument('--path', help = 'path to videos', default='/local/a/cam2/data/covid19/video_data/')
     args = parser.parse_args()
 
     i = database_iterator()
@@ -64,7 +65,8 @@ if __name__ == "__main__":
     model = init_detector(
         args.config, args.checkpoint, device=torch.device('cuda:0'))
 
-    path = '/local/a/cam2/data/covid19/video_data/'
+    path = args.path
+
     count = 0
 
     list_cams = os.listdir(path)
@@ -72,7 +74,9 @@ if __name__ == "__main__":
     # list_cams = ['h092zALqYg', '0369289ba3', '113644aeaa', 'Sm7vwNhHoV', 'h5SGg1wbzT', 'U7REmkvwZs', '1yY7h9xkXt', '4mKEIb96LV', 'OVZjQQIIYf']
 
     list_cams = [k + '/' for k in list_cams]
-
+    
+    print(list_cams)
+    
     for cam in list_cams:
         detections = dict()
         day_night = dict()
@@ -110,10 +114,10 @@ if __name__ == "__main__":
                 
                 detections[cam][date][image] = bbox_dict
 
-        f = open("person_detections_video", "w+")
+        f = open("person_detections_video", "a+")
         f.write(json.dumps(detections))
         f.close()
 
-        f = open("day_night_video_detections", "w+")
+        f = open("day_night_video_detections", "a+")
         f.write(json.dumps(day_night))
         f.close()
