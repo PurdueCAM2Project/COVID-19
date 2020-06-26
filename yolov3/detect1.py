@@ -60,7 +60,7 @@ class Vehicle_Detector():
 
         detections = dict()
         predictions = pred[0]
-        valid_labels = [1, 2, 3, 4, 7]
+        valid_labels = [2]
         # labels = predictions[:,5]
         # # consider only vehicles
         # # labels
@@ -75,11 +75,10 @@ class Vehicle_Detector():
                 confidence = float(predictions[i][4].cpu().detach().numpy())
                 label = int(predictions[i][5])
                 coordinates = predictions[i][:4].reshape(1, -1)
-                object_ = self.names[label]
                 coordinates = scale_coords(img_.shape[2:], coordinates, im0s_.shape).round(
                 ).cpu().detach().numpy()[0].tolist()
-                if label in valid_labels:
-                    key_ = object_+'-'+str(confidence)
+                if label == 2:
+                    key_ = str(confidence)
                     detections[key_] = coordinates
 
         if view_img:
