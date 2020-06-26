@@ -6,7 +6,7 @@ import torch
 import sys
 import re
 import os
-from multiprocessing import Process, current_process
+from pathos.multiprocessing import ProcessingPool as Pool
 
 # add the path ../ to import functions from the Pedestron module
 sys.path.append("../")
@@ -172,9 +172,9 @@ if __name__ == "__main__":
     person_model = init_detector(
         args.config, args.checkpoint, device=torch.device('cuda:0'))
 
-    vehicle_detector = Vehicle_Detector(weights=args.weights, cfg=args.cfg, names=args.names, iou_thres=args.iou_thres,
-                                        conf_thres=args.conf_thres, imgsz=args.img_size, half=args.half, device_id=args.device)
-
+   # vehicle_detector = Vehicle_Detector(weights=args.weights, cfg=args.cfg, names=args.names, iou_thres=args.iou_thres,
+                      #                  conf_thres=args.conf_thres, imgsz=args.img_size, half=args.half, device_id=args.device)
+    vehicle_detector = None
     worker_pool = []
     for i in range(0, worker_count):
         print('start', i*num_folders_per_job)
