@@ -1,2 +1,5 @@
 yolov3/weights/*
 Pedestron/pre_trained_models/*
+Validation_Set/*
+bgr_results/*
+rgb_results/*
