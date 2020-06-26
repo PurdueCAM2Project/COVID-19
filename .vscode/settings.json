@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/home/subhankar/anaconda3/envs/ml/bin/python"
+    "python.pythonPath": "/home/subhankar/anaconda3/envs/ml/bin/python",
+    "git.ignoreLimitWarning": true
 }
