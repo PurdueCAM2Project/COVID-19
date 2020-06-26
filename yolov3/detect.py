@@ -60,7 +60,7 @@ class Vehicle_Detector():
 
         detections = dict()
         predictions = pred[0]
-        valid_labels = [1, 2, 3, 4, 7]
+        valid_labels = [1, 2, 3, 5, 7]
         # labels = predictions[:,5]
         # # consider only vehicles
         # # labels

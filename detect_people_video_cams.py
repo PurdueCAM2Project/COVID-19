@@ -40,6 +40,14 @@ def all_same(i, image_link):
             return False
     return False
 
+
+def determine_day_night(image):  # determines whether or not an image is captured during the day or night
+    # 0 denotes night, 1 denotes day
+    if np.mean(image) > 60:
+        # this image was taken during the day
+        return 1
+    return 0
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='MMDet test detector')
     parser.add_argument('--config', help='test config file path', default='Pedestron/configs/elephant/cityperson/cascade_hrnet.py')
@@ -56,26 +64,39 @@ if __name__ == "__main__":
     model = init_detector(
         args.config, args.checkpoint, device=torch.device('cuda:0'))
 
-    detections = dict()
     path = '/local/a/cam2/data/covid19/video_data/'
     count = 0
 
     list_cams = os.listdir(path)
 
-    #list_cams = ['h092zALqYg', '0369289ba3', '113644aeaa', 'Sm7vwNhHoV', 'h5SGg1wbzT', 'U7REmkvwZs', '1yY7h9xkXt', '4mKEIb96LV', 'OVZjQQIIYf']
+    # list_cams = ['h092zALqYg', '0369289ba3', '113644aeaa', 'Sm7vwNhHoV', 'h5SGg1wbzT', 'U7REmkvwZs', '1yY7h9xkXt', '4mKEIb96LV', 'OVZjQQIIYf']
 
     list_cams = [k + '/' for k in list_cams]
 
     for cam in list_cams:
+        detections = dict()
+        day_night = dict()
         detections[cam] = dict()
+        day_night[cam] = dict()
+
         for date in os.listdir(path + cam):
             print(date)
             detections[cam][date] = dict()
+            day_night[cam][date] = dict()
+
             for image in os.listdir(path + cam + date):
                 detections[cam][date][image] = dict()
+                day_night[cam][date][image] = dict()
+
                 pil_image = Image.open(path + cam + date + '/' + image)
-                #img = cv2.imread(i.get_image(image_link[0]))
                 img = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+
+                # day night calculation
+                if determine_day_night(img) == 0:
+                    day_night[cam][date][image] = 'night'
+                else:
+                    day_night[cam][date][image] = 'day'
+
                 results = inference_detector(model, img)
                 if isinstance(results, tuple):
                     bbox_result, segm_result = results
@@ -89,6 +110,10 @@ if __name__ == "__main__":
                 
                 detections[cam][date][image] = bbox_dict
 
-        f = open("person_detections_video" + cam.strip('/') , "w+")
+        f = open("person_detections_video", "w+")
         f.write(json.dumps(detections))
+        f.close()
+
+        f = open("day_night_video_detections", "w+")
+        f.write(json.dumps(day_night))
         f.close()

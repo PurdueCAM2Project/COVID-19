@@ -64,6 +64,7 @@ def main(person_model, vehicle_detector, subset_all_images, process_num):
 
     vehicle_filename = os.path.join(args.save_path, "vehicle_detections_" + process_num + ".json")
     person_filename = os.path.join(args.save_path, "person_detections_" + process_num + ".json")
+    day_night_filename = os.path.join(args.save_path, "day_night_" + process_num + ".json")
 
 
     for foldername, image_link, time in i.get_subset_images(subset_all_images):
@@ -117,6 +118,10 @@ def main(person_model, vehicle_detector, subset_all_images, process_num):
 
             f = open(person_filename, "w+")
             f.write(json.dumps(person_detections))
+            f.close()
+
+            f = open(day_night_filename, "w+")
+            f.write(json.dumps(day_night))
             f.close()
 
 
