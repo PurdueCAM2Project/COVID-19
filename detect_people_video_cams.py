@@ -76,10 +76,10 @@ if __name__ == "__main__":
     list_cams = [k + '/' for k in list_cams]
     
     print(list_cams)
-    
+    detections = dict()
+    day_night = dict()
+
     for cam in list_cams:
-        detections = dict()
-        day_night = dict()
         detections[cam] = dict()
         day_night[cam] = dict()
 
@@ -114,10 +114,10 @@ if __name__ == "__main__":
                 
                 detections[cam][date][image] = bbox_dict
 
-        f = open("person_detections_video", "a+")
+        f = open("person_detections_video", "w+")
         f.write(json.dumps(detections))
         f.close()
 
-        f = open("day_night_video_detections", "a+")
+        f = open("day_night_video_detections", "w+")
         f.write(json.dumps(day_night))
         f.close()
