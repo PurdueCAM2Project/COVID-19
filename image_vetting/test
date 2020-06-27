@@ -1,0 +1,18 @@
+#!/bin/bash
+TEST_DIRECTORY=`realpath test_images`
+python filter.py 0 $TEST_DIRECTORY 2
+echo "test_images/usable_data contents:"
+ls ./test_images/usable_data
+echo "test_images/unusable_data contents:"
+ls ./test_images/unusable_data
+mv ./test_images/usable_data/* ./test_images
+mv ./test_images/unusable_data/* ./test_images
+#TODO implement meaningful pass fail feedback
+
+#TEST ON DATA
+echo "TEST ON SAMPLE DATA START\n"
+SAMPLE_DIRECTORY=`realpath test_images/SampleVideos`
+
+python filter.py 1 $SAMPLE_DIRECTORY 1
+
+#TODO implement meaningful pass fail feedback
