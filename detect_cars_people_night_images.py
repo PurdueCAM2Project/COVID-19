@@ -153,6 +153,8 @@ if __name__ == "__main__":
                         help='directory to save results')
     parser.add_argument('--num_workers', type=int, default=6)
     parser.add_argument('--multiprocessing', default=False)
+    parser.add_argument('--start', type=int)
+    parser.add_argument('--end', type=int)
     args = parser.parse_args()
 
     directory_exists = os.path.isdir(args.save_path)
@@ -195,12 +197,14 @@ if __name__ == "__main__":
         for p in worker_pool:
             p.join()
     else:
-        print(i)
-        for i in range(0, worker_count):
-            if i == worker_count-1:
-                main(person_model, vehicle_detector, all_images[i * num_folders_per_job:], i)
-            else:
-                main(person_model, vehicle_detector, all_images[i * num_folders_per_job: i * num_folders_per_job + num_folders_per_job + 1], i)
+        main(person_model, vehicle_detector, all_images[args.start, args.end], args.start)
+        # print(i)
+        # for i in range(0, worker_count):
+        #     if i == worker_count-1:
+        #         main(person_model, vehicle_detector, all_images[i * num_folders_per_job:], i)
+        #     else:
+        #         main(person_model, vehicle_detector, all_images[i * num_folders_per_job: i * num_folders_per_job + num_folders_per_job + 1], i)
+
 
     """
     pool = ProcessPool(nodes = worker_count) 
