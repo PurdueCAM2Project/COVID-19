@@ -197,7 +197,7 @@ if __name__ == "__main__":
         for p in worker_pool:
             p.join()
     else:
-        main(person_model, vehicle_detector, all_images[args.start, args.end], args.start)
+        main(person_model, vehicle_detector, all_images[args.start:args.end], args.start)
         # print(i)
         # for i in range(0, worker_count):
         #     if i == worker_count-1:
