@@ -53,14 +53,13 @@ class Analyzer:
         return simplified_dict
 
     def normalize_simplified_dict(self, in_dict):
-        dict = in_dict.copy()
-        for cam_id in dict:
-            s = sum(dict[cam_id].values())
-            for date in dict[cam_id]:
-                dict[cam_id][date] = dict[cam_id][date]/s
+        d = in_dict.copy()
+        for cam_id in d:
+            s = sum(d[cam_id].values())
+            for date in d[cam_id]:
+                d[cam_id][date] = d[cam_id][date]/s
 
-        return dict
-
+        return d
 
 
     def add_results_df(self, results_dict, cam_type, object):
