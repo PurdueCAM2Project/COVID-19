@@ -3,7 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="d7b6c9d9-6c44-4026-8ff8-5033da7f3caa" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/detect_cars_people_night_images.py" beforeDir="false" afterPath="$PROJECT_DIR$/detect_cars_people_night_images.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Analyze_All_Data/Analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Analyze_All_Data/Analyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Analyze_All_Data/detect_people_image_cams.py" beforeDir="false" afterPath="$PROJECT_DIR$/Analyze_All_Data/detect_people_image_cams.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/database_iterator_30kcams.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/database_iterator_30kcams.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -44,6 +46,54 @@
         </RuleState>
       </list>
     </option>
+  </component>
+  <component name="RunManager" selected="Python.Analyzer">
+    <configuration name="Analyzer" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="COVID-19" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="/usr/local/bin/python3.7" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Analyze_All_Data" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Analyze_All_Data/Analyzer.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="database_iterator_30kcams" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="COVID-19" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="/usr/local/bin/python3.7" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Tools" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Tools/database_iterator_30kcams.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.database_iterator_30kcams" />
+      <item itemvalue="Python.Analyzer" />
+    </list>
   </component>
   <component name="SvnConfiguration">
     <configuration />

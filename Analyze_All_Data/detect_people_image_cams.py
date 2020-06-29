@@ -41,6 +41,12 @@ def all_same(i, image_link):
             return False
     return False
 
+def determine_day_night(image):  # determines whether or not an image is captured during the day or night
+    # 0 denotes night, 1 denotes day
+    if np.mean(image) > 60:
+        # this image was taken during the day
+        return 1
+    return 0
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='MMDet test detector')
     parser.add_argument('--config', help='test config file path', default='Pedestron/configs/elephant/cityperson/cascade_hrnet.py')
@@ -58,6 +64,7 @@ if __name__ == "__main__":
         args.config, args.checkpoint, device=torch.device('cuda:0'))
 
     detections = dict()
+    day_night = dict()
 
     count = 0
     list_cams = ['5b194a7973569e00045d0afa', '5b194a8773569e00045d0b33', '5b194a9573569e00045d0b69', '5b19491873569e00045d0524', '5b0d3ee884d57c0004cba658', '5b0d3f7284d57c0004cba6e5', '5b19489a73569e00045d0305', '5b19788d73569e00045dc9e8', '5b19768e73569e00045db92a', '5b19726d73569e00045d9c4f', '5b0d3eb084d57c0004cba61e']

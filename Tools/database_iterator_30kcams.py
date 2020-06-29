@@ -573,9 +573,10 @@ class database_video_iterator():
 
 if __name__ == "__main__":
     import cv2
-    k = database_video_iterator()
+    k = database_iterator()
     print(f"total network cameras: {k.numcams}")
-
+    print(len(k.folders))
+    print(k.folders)
     for cam, time in k.iterate_folder(folder_name = "0369289ba3"):
         image = k.get_video_frame(cam)
         print(image)

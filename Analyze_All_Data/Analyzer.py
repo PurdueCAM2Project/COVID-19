@@ -22,6 +22,7 @@ class Analyzer:
             with open (each, 'r') as file:
                 d = json.load(file)
                 print(d.keys())
+                print(len(d.keys()))
                 self.merge(merged_dict, d)
 
         print(merged_dict.keys())
@@ -50,6 +51,17 @@ class Analyzer:
                 simplified_dict[cam_id][date_time] = max_count
 
         return simplified_dict
+
+    def normalize_simplified_dict(self, in_dict):
+        dict = in_dict.copy()
+        for cam_id in dict:
+            s = sum(dict[cam_id].values())
+            for date in dict[cam_id]:
+                dict[cam_id][date] = dict[cam_id][date]/s
+
+        return dict
+
+
 
     def add_results_df(self, results_dict, cam_type, object):
         """
@@ -104,7 +116,7 @@ if __name__ == "__main__":
     """
     example usage
     """
-    video_results_files = ['person_detections_video0369289ba3']
+    video_results_files = ['../person_detections_video']
 
     a = Analyzer()
 
@@ -113,11 +125,12 @@ if __name__ == "__main__":
     merged_dict = a.consolidate_individual_video_detections(video_results_files)
 
     simple_video_results = a.simplify_video_detections(merged_dict)
-    # print(simple_video_results)
+    simple_video_results_normalized = a.normalize_simplified_dict(simple_video_results)
+    # print(simple_video_results
     # with open('video_detections.json', 'w+') as outfile:
     #     outfile.write(json.dumps(simple_video_results))
 
-    a.easy_plot(simple_video_results)
+    a.easy_plot(simple_video_results_normalized)
     # a.add_results_df(simple_video_results)
     # print(a.df)
 
