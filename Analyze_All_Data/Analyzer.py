@@ -181,14 +181,16 @@ if __name__ == "__main__":
     add json detections into dataframe
     """
 
-    simple_video_results_person = a.load_json('simple_video_detections_person')
-    a.add_results_df(simple_video_results_person, 'video', 'person')
+    # simple_video_results_person = a.load_json('simple_video_detections_person')
+    # a.add_results_df(simple_video_results_person, 'video', 'person')
+    #
+    # image_results_car = a.load_json('../vehicle_detections.json')
+    # image_results_car_simple = a.simplify_video_detections(image_results_car, 'simple_image_detections_car')
+    # a.add_results_df(image_results_car_simple, 'image', 'vehicle')
 
-    image_results_car = a.load_json('../vehicle_detections.json')
-    image_results_car_simple = a.simplify_video_detections(image_results_car, 'simple_image_detections_car')
-    a.add_results_df(image_results_car_simple, 'image', 'vehicle')
-
-
+    image_results_people = a.load_json('../person_detections.json')
+    image_results_people_simple = a.simplify_video_detections(image_results_people, 'simple_image_detections_people')
+    a.add_results_df(image_results_people_simple, 'image', 'person')
 
 
 
