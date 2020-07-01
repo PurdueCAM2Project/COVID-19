@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import sys
 import re
 from os import path
+import numpy as np
 
 sys.path.append("../")
 sys.path.append("./")
@@ -21,7 +22,8 @@ class Analyzer:
 
     def load_json(self, json_file):
         with open(json_file, 'r') as infile:
-            d = json.load(infile)
+            text = infile.read()
+            d = json.loads(text)
         return d
 
     def consolidate_individual_video_detections(self, filenames):
@@ -47,7 +49,6 @@ class Analyzer:
     def simplify_video_detections(self, video_dict: dict, filename):
         """
         function to parse video detections to max_video detections (same format as image detections)
-
         input: {cam_id: {date: {frame:count, frame: count}}}
         :return: simplified dict {cam_id: {date: count, date: count}}
         """
@@ -78,40 +79,55 @@ class Analyzer:
         for cam_id in d.keys():
             try:
                 largest_value = max(d[cam_id].values())
+                for date in d[cam_id]:
+                    d[cam_id][date] = d[cam_id][date]/largest_value
             except ValueError:
-                largest_value = float('inf')
-
-            for date in d[cam_id]:
-                d[cam_id][date] = d[cam_id][date]/largest_value
+                # largest_value = float('inf')
+                for date in d[cam_id]:
+                    d[cam_id][date] = 0
         return d
 
 
-    def add_results_df(self, results_dict, cam_type, object):
+    def add_results_df(self, results_dict, cam_type, obj):
         """
         function to parse simplified json results into dataframe
         if video data, results must be simplified first using simplify_video_detections
-
         results_dict = either a video or image dictionary of results
         cam_type = ['video', 'image']
         object = ['vehicle', 'person']
         :return: None
         """
-        for cam_id in results_dict:
-            for date_time in results_dict[cam_id]:
-                print('date_time', date_time)
-                p = re.compile('\d\d\d\d-\d\d-\d\d')
-                data = dict()
-                data = {'date': pd.to_datetime(p.search(date_time).group(0)), 'cam_id': cam_id, 'type': cam_type}
+        p = re.compile('\d\d\d\d-\d\d-\d\d')
 
-                if object == 'vehicle':
-                    data['vehicle_count'] = results_dict[cam_id][date_time]
-                elif object == 'person':
-                    data['pedestrian_count'] = results_dict[cam_id][date_time]
+        if obj == 'vehicle':
+            key = 'vehicle_count'
+        elif obj == 'person':
+            key = 'pedestrian_count'
 
-                self.df = self.df.append(data, ignore_index=True, sort=False)
+        size = len(results_dict.keys()) - 1
+        frames = [self.df]
 
+        # save all dictionaries
+        record = []
+
+        # builds dictionary record
+        for i, cam_id in enumerate(results_dict):
+            if len(results_dict[cam_id]) > 0:
+                for date_time in results_dict[cam_id]:
+                    data = {'date': pd.to_datetime(p.search(date_time).group(0)), 'cam_id': cam_id, 'type': cam_type, key: None}
+                    data[key] = results_dict[cam_id][date_time]
+                    record.append(data)
+                print(f"  {i}/{size}\r", flush = True, end = "")
+
+        #build the data frame
+        frames.append(pd.DataFrame.from_records(record))
+        self.df = pd.concat(frames, sort=False)
         self.df.to_csv('all_data.csv')
-        print(self.df)
+
+        # display head and tail
+        print(self.df.head(5))
+        print(self.df.tail(5))
+        return
 
     def plot_time_series(self):
         """
@@ -156,7 +172,6 @@ if __name__ == "__main__":
     """
     example usage
     """
-
     a = Analyzer()
 
 
@@ -183,15 +198,11 @@ if __name__ == "__main__":
 
     # simple_video_results_person = a.load_json('simple_video_detections_person')
     # a.add_results_df(simple_video_results_person, 'video', 'person')
+    #
+    # image_results_car = a.load_json('../vehicle_detections.json')
+    # image_results_car_simple = a.simplify_video_detections(image_results_car, 'simple_image_detections_car')
+    # a.add_results_df(image_results_car_simple, 'image', 'vehicle')
 
-    image_results_car = a.load_json('results/vehicle_detections.json')
-    image_results_car_simple = a.simplify_video_detections(image_results_car, 'simple_image_detections_car')
-    a.add_results_df(image_results_car_simple, 'image', 'vehicle')
-
-
-
-
-
-
-
-
+    image_results_people = a.load_json('../person_detections.json')
+    image_results_people_simple = a.simplify_video_detections(image_results_people, 'simple_image_detections_people')
+    a.add_results_df(image_results_people_simple, 'image', 'person')
