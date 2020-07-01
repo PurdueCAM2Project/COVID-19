@@ -5,3 +5,6 @@ bgr_results/*
 rgb_results/*
 person_detections_video
 __pycache__/Analyzer1.cpython-36.pyc
+day_night_0.json
+results/*
+*dict_small*

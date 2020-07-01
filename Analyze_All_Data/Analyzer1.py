@@ -151,42 +151,42 @@ class Analyzer:
 
         self.easy_plot(all_counts)
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
 
-#     """
-#     example usage
-#     """
+    """
+    example usage
+    """
 
-#     a = Analyzer()
-
-
-#     """
-#     plot person detections from raw video results
-#     """
-#     # # save raw results into one dict
-#     # video_results_files = ['../person_detections_video']
-#     # merged_dict = a.consolidate_individual_video_detections(video_results_files)
-
-#     # # simplify raw dict
-#     # simple_video_results = a.simplify_video_detections(merged_dict, 'simple_video_detections_person')
-
-#     # # normalize
-#     # simple_video_results_normalized = a.normalize_simplified_dict(simple_video_results)
-
-#     # # plot
-#     # a.easy_plot(simple_video_results_normalized)
+    a = Analyzer()
 
 
-#     """
-#     add json detections into dataframe
-#     """
+    """
+    plot person detections from raw video results
+    """
+    # # save raw results into one dict
+    # video_results_files = ['../person_detections_video']
+    # merged_dict = a.consolidate_individual_video_detections(video_results_files)
 
-#     simple_video_results_person = a.load_json('simple_video_detections_person')
-#     a.add_results_df(simple_video_results_person, 'video', 'person')
+    # # simplify raw dict
+    # simple_video_results = a.simplify_video_detections(merged_dict, 'simple_video_detections_person')
 
-#     image_results_car = a.load_json('../vehicle_detections.json')
-#     image_results_car_simple = a.simplify_video_detections(image_results_car, 'simple_image_detections_car')
-#     a.add_results_df(image_results_car_simple, 'image', 'vehicle')
+    # # normalize
+    # simple_video_results_normalized = a.normalize_simplified_dict(simple_video_results)
+
+    # # plot
+    # a.easy_plot(simple_video_results_normalized)
+
+
+    """
+    add json detections into dataframe
+    """
+
+    # simple_video_results_person = a.load_json('simple_video_detections_person')
+    # a.add_results_df(simple_video_results_person, 'video', 'person')
+
+    image_results_car = a.load_json('results/vehicle_detections.json')
+    image_results_car_simple = a.simplify_video_detections(image_results_car, 'simple_image_detections_car')
+    a.add_results_df(image_results_car_simple, 'image', 'vehicle')
 
 
 
