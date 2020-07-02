@@ -5,7 +5,7 @@ import sys
 import re
 from os import path, mkdir
 import numpy as np
-
+import sys
 sys.path.append("../")
 sys.path.append("./")
 
@@ -99,14 +99,14 @@ class Analyzer:
             simplified_dict[cam_id] = dict()
             for img_url in image_dict[cam_id]:
                 detections = image_dict[cam_id][img_url]
-                if object_!='person':
+                if object_ != 'person':
                     count = len(detections.keys())
                 else:
                     count = 0
                     confidences = list(detections.keys())
                     for confidence in confidences:
-                        if float(confidence)>confidence_threshold:
-                            count+=1
+                        if float(confidence) > confidence_threshold:
+                            count += 1
                 simplified_dict[cam_id][img_url] = count
         return simplified_dict
 
@@ -125,7 +125,7 @@ class Analyzer:
                     d[cam_id][date] = 0
         return d
 
-    def add_results_df(self, results_dict , obj='person', day_night_dict=None, cam_type='video', filename='detections', savedir='dataframes/'):
+    def add_results_df(self, results_dict, obj='person', day_night_dict=None, cam_type='video', filename='detections', savedir='dataframes/'):
         """
         function to parse simplified json results into dataframe
         if video data, results must be simplified first using simplify_video_detections
@@ -150,7 +150,7 @@ class Analyzer:
 
         # save all dictionaries
         record = []
-        if cam_type!='video':
+        if cam_type != 'video':
             for i, cam_id in enumerate(results_dict):
                 if len(results_dict[cam_id]) > 0:
                     for img_url in results_dict[cam_id]:
@@ -158,7 +158,7 @@ class Analyzer:
                             0)), 'cam_id': cam_id, 'type': cam_type, key: None}
                         data[key] = results_dict[cam_id][img_url]
 
-                        if day_night_dict!=None:
+                        if day_night_dict != None:
                             data['night'] = day_night_dict[cam_id][img_url]
                         record.append(data)
                     print(f"  {i}/{size}\r", flush=True, end="")
@@ -183,7 +183,7 @@ class Analyzer:
                             0)), 'cam_id': cam_id, 'type': cam_type, key: None}
                         data[key] = results_dict[cam_id][date_time]
 
-                        if day_night_dict!=None:
+                        if day_night_dict != None:
                             data['night'] = day_night_dict[cam_id][date_time]
                         record.append(data)
                     print(f"  {i}/{size}\r", flush=True, end="")
@@ -237,6 +237,7 @@ class Analyzer:
 
         self.easy_plot(all_counts)
 
+
 if __name__ == "__main__":
 
     """
@@ -244,45 +245,59 @@ if __name__ == "__main__":
     """
     a = Analyzer()
 
+    image_dictionary = a.load_json('results/July2_954_person_beach_image.json')
+    dn_dictionary = a.load_json('results/July2_954_day_night.json')
+    obj = 'person'
+    cam_type = 'image'
+    filename = 'trial'
+    savedir = 'dataframes'
+    conf_threshold = 0.3
 
-    """
-    plot person detections from raw video results
-    """
-    # # save raw results into one dict
-    # video_results_files = ['../person_detections_video']
-    # merged_dict = a.consolidate_individual_video_detections(video_results_files)
+    image_keys = set(image_dictionary.keys())
+    dn_keys = set(dn_dictionary.keys())
+    common_keys = dn_keys.intersection(image_keys)
+    bottleneck_n = len(common_keys)
+    if bottleneck_n == 0:
+        print("No common keys in the image and day night JSON")
+        print("Please check your data")
+        print("Exiting....")
+        sys.exit(0)
 
-    # # simplify raw dict
-    # simple_video_results = a.simplify_video_detections(merged_dict, 'simple_video_detections_person')
+    mini_image_dictionary = dict()
+    mini_dn_dictionary = dict()
 
-    # # normalize
-    # simple_video_results_normalized = a.normalize_simplified_dict(simple_video_results)
+    if (bottleneck_n < len(dn_keys)):
+        print("Bottlenecked by the number of detections in the image JSON.")
+    elif (bottleneck_n < len(image_keys)):
+        print("Bottlenecked by the number of detections in the day night JSON.")
 
-    # # plot
-    # a.easy_plot(simple_video_results_normalized)
+    print(f"proceeding with {bottleneck_n} keys")
+    for key in common_keys:
+        mini_image_dictionary[key] = image_dictionary[key]
+        mini_dn_dictionary[key] = dn_dictionary[key]
 
+    if cam_type == 'image':
+        mini_image_results_people = a.simplify_image_results(
+            mini_image_dictionary, object_=obj, confidence_threshold=conf_threshold)
+        a.add_results_df(mini_image_results_people, day_night_dict=mini_dn_dictionary,
+                         cam_type='image', obj=obj, filename=filename, savedir=savedir)
+    elif cam_type == 'video':
+        mini_image_results_people, mini_dn_dictionary = a.simplify_video_detections(
+            mini_image_results_people, day_night_dictionary=mini_dn_dictionary, conf_threshold=conf_threshold)
+        a.add_results_df(mini_image_dictionary, day_night_dict=mini_dn_dictionary,
+                         cam_type='video', obj=obj, filename=filename, savedir=savedir)
+    
 
-    """
-    add json detections into dataframe
-    """
+    # image_results_people = a.load_json('results/July2_954_person_beach_image.json')
+    # dn_detections_images = a.load_json('results/July2_954_day_night.json')
+    # image_results_people = a.simplify_image_results(image_results_people, object_='person')
+    # a.add_results_df(image_results_people, day_night_dict=dn_detections_images, cam_type='image', obj='person', filename='July2_954_beach', savedir='dataframes')
 
-    # simple_video_results_person = a.load_json('simple_video_detections_person')
-    # a.add_results_df(simple_video_results_person, 'video', 'person')
-    #
-    # image_results_car = a.load_json('../vehicle_detections.json')
-    # image_results_car_simple = a.simplify_video_detections(image_results_car, 'simple_image_detections_car')
-    # a.add_results_df(image_results_car_simple, 'image', 'vehicle')
+    # image_results_vehicles = a.load_json('results/vehicle_detections_mini.json')
+    # image_results_vehicles = a.simplify_image_results(image_results_vehicles, object_='vehicle')
+    # a.add_results_df(image_results_vehicles, day_night_dict=dn_detections_images, cam_type='image', obj='vehicle', filename='trial1', savedir='dataframes')
 
-    image_results_people = a.load_json('results/person_detections_0_mini.json')
-    dn_detections_images = a.load_json('results/day_night_images_mini.json')
-    image_results_people = a.simplify_image_results(image_results_people, object_='person')
-    a.add_results_df(image_results_people, day_night_dict=dn_detections_images, cam_type='image', obj='person', filename='trial', savedir='dataframes')
-
-    image_results_vehicles = a.load_json('results/vehicle_detections_mini.json')
-    image_results_vehicles = a.simplify_image_results(image_results_vehicles, object_='vehicle')
-    a.add_results_df(image_results_vehicles, day_night_dict=dn_detections_images, cam_type='image', obj='vehicle', filename='trial1', savedir='dataframes')
-
-    video_results_people = a.load_json('results/person_detections_video_mini.json')
-    dn_detections_videos = a.load_json('results/day_night_video_detections_mini.json')
-    imr, dnr = a.simplify_video_detections(video_results_people, day_night_dictionary=dn_detections_videos)
-    a.add_results_df(imr, day_night_dict=dnr, obj='person', cam_type='video', filename='trial2', savedir='dataframes')    
+    # video_results_people = a.load_json('results/person_detections_video_mini.json')
+    # dn_detections_videos = a.load_json('results/day_night_video_detections_mini.json')
+    # imr, dnr = a.simplify_video_detections(video_results_people, day_night_dictionary=dn_detections_videos)
+    # a.add_results_df(imr, day_night_dict=dnr, obj='person', cam_type='video', filename='trial2', savedir='dataframes')
