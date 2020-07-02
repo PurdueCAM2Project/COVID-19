@@ -4,8 +4,8 @@
     <list default="true" id="d7b6c9d9-6c44-4026-8ff8-5033da7f3caa" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Analyze_All_Data/Analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Analyze_All_Data/Analyzer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Analyze_All_Data/detect_people_image_cams.py" beforeDir="false" afterPath="$PROJECT_DIR$/Analyze_All_Data/detect_people_image_cams.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tools/database_iterator_30kcams.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/database_iterator_30kcams.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pedestron/testing" beforeDir="false" afterPath="$PROJECT_DIR$/Pedestron/testing" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/detect_people_video_cams.py" beforeDir="false" afterPath="$PROJECT_DIR$/detect_people_video_cams.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

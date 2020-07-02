@@ -188,7 +188,7 @@ if __name__ == "__main__":
     # image_results_car_simple = a.simplify_video_detections(image_results_car, 'simple_image_detections_car')
     # a.add_results_df(image_results_car_simple, 'image', 'vehicle')
 
-    image_results_people = a.load_json('../person_detections.json')
+    image_results_people = a.load_json('../person_detections_0.json')
     image_results_people_simple = a.simplify_video_detections(image_results_people, 'simple_image_detections_people')
     a.add_results_df(image_results_people_simple, 'image', 'person')
 

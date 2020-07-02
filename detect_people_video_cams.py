@@ -79,7 +79,7 @@ if __name__ == "__main__":
     detections = dict()
     day_night = dict()
 
-    for cam in list_cams:
+    for cam in list_cams
         detections[cam] = dict()
         day_night[cam] = dict()
 
