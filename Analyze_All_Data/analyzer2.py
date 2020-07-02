@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sys
 import re
-from os import path
+from os import path, mkdir
 import numpy as np
 
 sys.path.append("../")
@@ -125,17 +125,20 @@ class Analyzer:
                     d[cam_id][date] = 0
         return d
 
-    def add_results_df(self, results_dict , obj='person', day_night_dict=None, cam_type='video'):
+    def add_results_df(self, results_dict , obj='person', day_night_dict=None, cam_type='video', filename='detections', savedir='dataframes/'):
         """
         function to parse simplified json results into dataframe
         if video data, results must be simplified first using simplify_video_detections
         results_dict = either a video or image dictionary of results
         cam_type = ['video', 'image']
-        object = ['vehicle', 'person']
+        obj = ['vehicle', 'person']
+        file is saved as "savedir/filename_cam_type_obj.csv"
         :return: None
         """
         p = re.compile('\d\d\d\d-\d\d-\d\d')
-
+        if not path.isdir(savedir):
+            mkdir(savedir)
+        save_path = path.join(savedir, filename+'_'+cam_type+'_'+obj+'.csv')
         if obj == 'vehicle':
             key = 'vehicle_count'
             frames = [self.df_vehicles]
@@ -163,7 +166,8 @@ class Analyzer:
             # build the data frame
             frames.append(pd.DataFrame.from_records(record))
             self.df_person = pd.concat(frames, sort=False)
-            self.df_person.to_csv(obj+'_image.csv')
+            # self.df_person.to_csv(obj+'_image.csv')
+            self.df_person.to_csv(save_path)
 
             # display head and tail
             print(self.df_person.head(5))
@@ -187,7 +191,8 @@ class Analyzer:
             # build the data frame
             frames.append(pd.DataFrame.from_records(record))
             self.df_vehicles = pd.concat(frames, sort=False)
-            self.df_vehicles.to_csv(obj+'_video.csv')
+            # self.df_vehicles.to_csv(obj+'_video.csv')
+            self.df_vehicles.to_csv(save_path)
 
             # display head and tail
             print(self.df_vehicles.head(5))
@@ -271,13 +276,13 @@ if __name__ == "__main__":
     image_results_people = a.load_json('results/person_detections_0_mini.json')
     dn_detections_images = a.load_json('results/day_night_images_mini.json')
     image_results_people = a.simplify_image_results(image_results_people, object_='person')
-    a.add_results_df(image_results_people, day_night_dict=dn_detections_images, cam_type='image', obj='person')
+    a.add_results_df(image_results_people, day_night_dict=dn_detections_images, cam_type='image', obj='person', filename='trial', savedir='dataframes')
 
     image_results_vehicles = a.load_json('results/vehicle_detections_mini.json')
     image_results_vehicles = a.simplify_image_results(image_results_vehicles, object_='vehicle')
-    a.add_results_df(image_results_vehicles, day_night_dict=dn_detections_images, cam_type='image', obj='vehicle')
+    a.add_results_df(image_results_vehicles, day_night_dict=dn_detections_images, cam_type='image', obj='vehicle', filename='trial1', savedir='dataframes')
 
     video_results_people = a.load_json('results/person_detections_video_mini.json')
     dn_detections_videos = a.load_json('results/day_night_video_detections_mini.json')
     imr, dnr = a.simplify_video_detections(video_results_people, day_night_dictionary=dn_detections_videos)
-    a.add_results_df(imr, day_night_dict=dnr, obj='person', cam_type='video')    
+    a.add_results_df(imr, day_night_dict=dnr, obj='person', cam_type='video', filename='trial2', savedir='dataframes')    
