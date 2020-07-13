@@ -245,11 +245,11 @@ if __name__ == "__main__":
     """
     a = Analyzer()
 
-    image_dictionary = a.load_json('results/July6_1030_vehicle_image.json')
-    dn_dictionary = a.load_json('results/July6_1030_day_night.json')
+    image_dictionary = a.load_json('results/July8_419_vehicle_image.json')
+    dn_dictionary = a.load_json('results/July8_419_day_night.json')
     obj = 'vehicle'
     cam_type = 'image'
-    filename = 'July6_1030'
+    filename = 'July8_419'
     savedir = 'dataframes'
     conf_threshold = 0.3
 
