@@ -1,14 +1,13 @@
+# add the path ../ to import functions from the Pedestron module
+sys.path.append("../")
+sys.path.append("./")
+
 import json
 import argparse
 import numpy as np
 import cv2
 import torch
 import sys
-
-# add the path ../ to import functions from the Pedestron module
-sys.path.append("../")
-sys.path.append("./")
-
 from Tools.database_iterator_30kcams import database_iterator
 from Tools.scene_detection_30kcams import SceneDetectionClass
 from Pedestron.mmdet.apis import init_detector, inference_detector

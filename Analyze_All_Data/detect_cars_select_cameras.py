@@ -1,3 +1,11 @@
+# add the path ../ to import functions from the yolov3 module
+sys.path.append("../")
+sys.path.append("./")
+from Tools.database_iterator_30kcams import database_iterator
+from Tools.scene_detection_30kcams import SceneDetectionClass
+from yolov3.detect import Vehicle_Detector
+from yolov3.utils.utils import *
+from yolov3.utils.datasets import *
 import json
 import argparse
 import numpy as np
@@ -6,15 +14,7 @@ import torch
 import sys
 import matplotlib.pyplot as plt
 import time
-# add the path ../ to import functions from the yolov3 module
-sys.path.append("../")
-sys.path.append("./")
 
-from yolov3.utils.datasets import *
-from yolov3.utils.utils import *
-from yolov3.detect import Vehicle_Detector
-from Tools.scene_detection_30kcams import SceneDetectionClass
-from Tools.database_iterator_30kcams import database_iterator
 
 def all_same(i, image_link):
     if len(image_link) >= 4:
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     parser.add_argument('--device', default='0',
                         help='device id (i.e. 0 or 0,1) or cpu')
     parser.add_argument('--save-path', default='results',
-                        help='directory to save results')                        
+                        help='directory to save results')
     args = parser.parse_args()
     args.cfg = check_file(args.cfg)  # check file
     args.names = check_file(args.names)  # check file
@@ -80,7 +80,6 @@ if __name__ == "__main__":
 
     vehicle_detector = Vehicle_Detector(weights=args.weights, cfg=args.cfg, names=args.names, iou_thres=args.iou_thres,
                                         conf_thres=args.conf_thres, imgsz=args.img_size, half=args.half, device_id=args.device)
-
 
     f = open('Analyze_All_Data/cameras.txt', 'r')
     list_cams = f.read().splitlines()
@@ -114,7 +113,7 @@ if __name__ == "__main__":
                 img = np.array(i.get_image(image_link).convert('RGB'))
                 results = vehicle_detector.detect(img, view_img=False)
                 detections[foldername][image_link] = results
-                if j%20==19:
+                if j % 20 == 19:
                     print(f"{j+1} done out of {len(image_links)} images")
 
             f = open(filename, "w+")

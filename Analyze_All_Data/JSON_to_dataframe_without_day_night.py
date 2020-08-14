@@ -1,3 +1,6 @@
+sys.path.append("../")
+sys.path.append("./")
+
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -6,17 +9,10 @@ import re
 from os import path, mkdir
 import numpy as np
 import sys
-sys.path.append("../")
-sys.path.append("./")
 
 
 class Analyzer:
     def __init__(self):
-        # self.filename = 'all_data.csv'
-        # if path.exists(self.filename):
-        #     self.df = pd.read_csv(self.filename)
-        # else:
-
         self.df_person = pd.DataFrame(columns=(
             'date', 'cam_id', 'night', 'dense', 'type', 'place', 'pedestrian_count'))
 
@@ -240,15 +236,15 @@ class Analyzer:
 
 if __name__ == "__main__":
 
-    """
-    example usage
+    # Example Usage
     """
     a = Analyzer()
 
-    image_dictionary = a.load_json('results/person_detections_video_all_0_40.json')
+    image_dictionary = a.load_json(
+        'results/person_detections_MISSING_image_2400_2500')
     obj = 'person'
-    cam_type = 'video'
-    filename = 'detections_0_40'
+    cam_type = 'image'
+    filename = 'detections_MISSING_2400_2500'
     savedir = 'dataframes'
     conf_threshold = 0.3
 
@@ -276,135 +272,38 @@ if __name__ == "__main__":
             mini_image_dictionary, conf_threshold=conf_threshold)
         a.add_results_df(mini_image_results_people, cam_type='video',
                          obj=obj, filename=filename, savedir=savedir)
+    """
+    a = Analyzer()
 
+    image_dictionary = a.load_json(
+        'results/person_detections_MISSING_image_2400_2500')
+    obj = 'person'
+    cam_type = 'image'
+    filename = 'detections_MISSING_2400_2500'
+    savedir = 'dataframes'
+    conf_threshold = 0.3
 
-    # image_dictionary = a.load_json('results/person_detections_video_all_100_140.json')
-    # obj = 'person'
-    # cam_type = 'video'
-    # filename = 'detections_100_140'
-    # savedir = 'dataframes'
-    # conf_threshold = 0.3
+    common_keys = set(image_dictionary.keys())
+    bottleneck_n = len(common_keys)
+    if bottleneck_n == 0:
+        print("No keys in the image JSON")
+        print("Please check your data")
+        print("Exiting....")
+        sys.exit(0)
 
-    # common_keys = set(image_dictionary.keys())
-    # bottleneck_n = len(common_keys)
-    # if bottleneck_n == 0:
-    #     print("No keys in the image JSON")
-    #     print("Please check your data")
-    #     print("Exiting....")
-    #     sys.exit(0)
+    mini_image_dictionary = dict()
 
-    # mini_image_dictionary = dict()
+    print(f"{bottleneck_n} keys present.")
+    for key in common_keys:
+        mini_image_dictionary[key] = image_dictionary[key]
 
-    # print(f"{bottleneck_n} keys present.")
-    # for key in common_keys:
-    #     mini_image_dictionary[key] = image_dictionary[key]
-
-    # if cam_type == 'image':
-    #     mini_image_results_people = a.simplify_image_results(
-    #         mini_image_dictionary, object_=obj, confidence_threshold=conf_threshold)
-    #     a.add_results_df(mini_image_results_people, cam_type='image',
-    #                      obj=obj, filename=filename, savedir=savedir)
-    # elif cam_type == 'video':
-    #     mini_image_results_people = a.simplify_video_detections(
-    #         mini_image_dictionary, conf_threshold=conf_threshold)
-    #     a.add_results_df(mini_image_results_people, cam_type='video',
-    #                      obj=obj, filename=filename, savedir=savedir)
-
-
-    # image_dictionary = a.load_json('results/person_detections_video_all_140_180.json')
-    # obj = 'person'
-    # cam_type = 'video'
-    # filename = 'detections_140_180'
-    # savedir = 'dataframes'
-    # conf_threshold = 0.3
-
-    # common_keys = set(image_dictionary.keys())
-    # bottleneck_n = len(common_keys)
-    # if bottleneck_n == 0:
-    #     print("No keys in the image JSON")
-    #     print("Please check your data")
-    #     print("Exiting....")
-    #     sys.exit(0)
-
-    # mini_image_dictionary = dict()
-
-    # print(f"{bottleneck_n} keys present.")
-    # for key in common_keys:
-    #     mini_image_dictionary[key] = image_dictionary[key]
-
-    # if cam_type == 'image':
-    #     mini_image_results_people = a.simplify_image_results(
-    #         mini_image_dictionary, object_=obj, confidence_threshold=conf_threshold)
-    #     a.add_results_df(mini_image_results_people, cam_type='image',
-    #                      obj=obj, filename=filename, savedir=savedir)
-    # elif cam_type == 'video':
-    #     mini_image_results_people = a.simplify_video_detections(
-    #         mini_image_dictionary, conf_threshold=conf_threshold)
-    #     a.add_results_df(mini_image_results_people, cam_type='video',
-    #                      obj=obj, filename=filename, savedir=savedir)
-
-
-    # image_dictionary = a.load_json('results/person_detections_video_all_180_220.json')
-    # obj = 'person'
-    # cam_type = 'video'
-    # filename = 'detections_180_220'
-    # savedir = 'dataframes'
-    # conf_threshold = 0.3
-
-    # common_keys = set(image_dictionary.keys())
-    # bottleneck_n = len(common_keys)
-    # if bottleneck_n == 0:
-    #     print("No keys in the image JSON")
-    #     print("Please check your data")
-    #     print("Exiting....")
-    #     sys.exit(0)
-
-    # mini_image_dictionary = dict()
-
-    # print(f"{bottleneck_n} keys present.")
-    # for key in common_keys:
-    #     mini_image_dictionary[key] = image_dictionary[key]
-
-    # if cam_type == 'image':
-    #     mini_image_results_people = a.simplify_image_results(
-    #         mini_image_dictionary, object_=obj, confidence_threshold=conf_threshold)
-    #     a.add_results_df(mini_image_results_people, cam_type='image',
-    #                      obj=obj, filename=filename, savedir=savedir)
-    # elif cam_type == 'video':
-    #     mini_image_results_people = a.simplify_video_detections(
-    #         mini_image_dictionary, conf_threshold=conf_threshold)
-    #     a.add_results_df(mini_image_results_people, cam_type='video',
-    #                      obj=obj, filename=filename, savedir=savedir)
-
-
-    # image_dictionary = a.load_json('results/person_detections_video_all_220_260.json')
-    # obj = 'person'
-    # cam_type = 'video'
-    # filename = 'detections_220_260'
-    # savedir = 'dataframes'
-    # conf_threshold = 0.3
-
-    # common_keys = set(image_dictionary.keys())
-    # bottleneck_n = len(common_keys)
-    # if bottleneck_n == 0:
-    #     print("No keys in the image JSON")
-    #     print("Please check your data")
-    #     print("Exiting....")
-    #     sys.exit(0)
-
-    # mini_image_dictionary = dict()
-
-    # print(f"{bottleneck_n} keys present.")
-    # for key in common_keys:
-    #     mini_image_dictionary[key] = image_dictionary[key]
-
-    # if cam_type == 'image':
-    #     mini_image_results_people = a.simplify_image_results(
-    #         mini_image_dictionary, object_=obj, confidence_threshold=conf_threshold)
-    #     a.add_results_df(mini_image_results_people, cam_type='image',
-    #                      obj=obj, filename=filename, savedir=savedir)
-    # elif cam_type == 'video':
-    #     mini_image_results_people = a.simplify_video_detections(
-    #         mini_image_dictionary, conf_threshold=conf_threshold)
-    #     a.add_results_df(mini_image_results_people, cam_type='video',
-    #                      obj=obj, filename=filename, savedir=savedir)
+    if cam_type == 'image':
+        mini_image_results_people = a.simplify_image_results(
+            mini_image_dictionary, object_=obj, confidence_threshold=conf_threshold)
+        a.add_results_df(mini_image_results_people, cam_type='image',
+                         obj=obj, filename=filename, savedir=savedir)
+    elif cam_type == 'video':
+        mini_image_results_people = a.simplify_video_detections(
+            mini_image_dictionary, conf_threshold=conf_threshold)
+        a.add_results_df(mini_image_results_people, cam_type='video',
+                         obj=obj, filename=filename, savedir=savedir)

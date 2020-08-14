@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import requests
 import os
 from bs4 import BeautifulSoup
@@ -8,7 +9,7 @@ import urllib.request
 from PIL import Image
 import cv2
 import imageio
-import numpy as np 
+import numpy as np
 import datetime as dt
 from multiprocessing import Process, current_process
 import sys
@@ -39,17 +40,19 @@ for foldername, image_link, time in i.get_arbitrary_images():
     print(i.get_image(image_link).size)
 
 """
+
+
 class database_video_iterator():
     """
     Purpose: 
         a set of iterators to pull images from the http://vision.cs.luc.edu/~cv/images/ network cameras data base
     """
 
-    def __init__(self, link = 'http://vision.cs.luc.edu/~cv/videos/'):
+    def __init__(self, link='http://vision.cs.luc.edu/~cv/videos/'):
         """
         Purpose: 
             init iterators
-        
+
         input: 
             link: link to database
 
@@ -63,7 +66,7 @@ class database_video_iterator():
         self.dtms = None
         self.random_select = None
         return
-    
+
     @property
     def folder_names(self):
         folders = []
@@ -75,7 +78,7 @@ class database_video_iterator():
         """
         Purpose: 
             get the cameras in the database
-        
+
         input: 
             None
 
@@ -86,18 +89,18 @@ class database_video_iterator():
         soup = BeautifulSoup(html_text, 'html.parser')
         print(soup)
         print(len(soup))
-        #Getting only the Folder directories 
+        # Getting only the Folder directories
         attrs = {
             'href': re.compile(r'[\w]+')
         }
-        folders = soup.find_all('a', attrs = attrs)#only folder files
+        folders = soup.find_all('a', attrs=attrs)  # only folder files
         return folders
-    
+
     def get_images(self, directory):
         """
         Purpose: 
             get the images in the directory
-        
+
         input: 
             directory: the image directory in the data base
 
@@ -111,12 +114,12 @@ class database_video_iterator():
         }
         files = soup.find_all('a', attrs=attrs)
         return files
-    
+
     def get_datetimes(self, directory):
         """
         Purpose: 
             get the data and time of each image in directory
-        
+
         input: 
             directory: the image directory in the data base
 
@@ -129,13 +132,13 @@ class database_video_iterator():
         files = soup.find_all('td', text=tsearch)
         return files
 
-    def get_video_frame(self, image, url = True, folder_name = None):
+    def get_video_frame(self, image, url=True, folder_name=None):
         # name="http://vision.cs.luc.edu/~cv/videos/bcfe3110b5/2020-05-11_23_54_52.mp4"
         if image == None:
             return None
         if folder_name != None:
             image = f"{self.link}/{folder_name}/{image['href']}"
-        
+
         if url == True:
             image = imageio.get_reader(image)
             frames = []
@@ -152,8 +155,8 @@ class database_video_iterator():
                 if i > 5:
                     break
             del image
-        
-    def get_all_frames(self, image, url = True, folder_name = None, filepath = "None", iter_space = 1):
+
+    def get_all_frames(self, image, url=True, folder_name=None, filepath="None", iter_space=1):
         # name="http://vision.cs.luc.edu/~cv/videos/bcfe3110b5/2020-05-11_23_54_52.mp4"
         print(image)
         if image == None:
@@ -162,7 +165,7 @@ class database_video_iterator():
             image = f"{self.link}/{folder_name}/{image['href']}"
         # frames = []
         #image = imageio.get_reader(image)
-        #for i, frame in enumerate(image):
+        # for i, frame in enumerate(image):
         #frames = list(image)
         #del image
         cap = cv2.VideoCapture(image)
@@ -191,7 +194,7 @@ class database_video_iterator():
     def get_link(self, folder, image):
         return f"{self.link}{folder}/{image}"
 
-    def iterate_folder(self, folder_name, starting = 0):
+    def iterate_folder(self, folder_name, starting=0):
         self.imgs = self.get_images(folder_name)
         self.dtms = self.get_datetimes(folder_name)
 
@@ -200,25 +203,20 @@ class database_video_iterator():
         else:
             for i in range(starting, len(self.imgs)):
                 yield self.get_link(folder_name, self.imgs[i].text), self.dtms[i]
-    
 
 
 # from google.colab.patches import cv2_imshow
-import cv2
-import numpy as np
-import os
-import matplotlib.pyplot as plt
+
 
 def get_hw(image, width):
-    sp = image.shape[:2] 
-    height= int(sp[0]/sp[1] * width)
+    sp = image.shape[:2]
+    height = int(sp[0]/sp[1] * width)
     return height
 
 
 def save_movpeg(folder, image, number):
     if not os.path.isdir(f"videos/{folder}"):
         os.mkdir(f"videos/{folder}")
-
 
 
 def main(folder_names):
@@ -233,7 +231,8 @@ def main(folder_names):
                     path = f"{base_diectory}{folder_name}/{fname}"
                     if not os.path.isdir(path):
                         os.mkdir(path)
-                    image = k.get_all_frames(cam, filepath=f"{base_diectory}{folder_name}/{fname}", iter_space=30)
+                    image = k.get_all_frames(
+                        cam, filepath=f"{base_diectory}{folder_name}/{fname}", iter_space=30)
             except KeyboardInterrupt:
                 raise
             except:
@@ -241,7 +240,8 @@ def main(folder_names):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Download all videos from Argonne')
+    parser = argparse.ArgumentParser(
+        description='Download all videos from Argonne')
     parser.add_argument('--save_dir', type=str, default='videos/')
     parser.add_argument('--num_workers', type=int, default=6)
     arguments = parser.parse_args()
@@ -267,11 +267,12 @@ if __name__ == "__main__":
     worker_pool = []
     for i in range(0, worker_count):
         print('start', i*sub_length)
-        print('end',  i*sub_length + sub_length + 1 )
+        print('end',  i*sub_length + sub_length + 1)
         if i == worker_count:
             p = Process(target=main, args=(folder_names[i * sub_length:],))
         else:
-            p = Process(target=main, args=(folder_names[i*sub_length: i*sub_length + sub_length + 1],))
+            p = Process(target=main, args=(
+                folder_names[i*sub_length: i*sub_length + sub_length + 1],))
         p.start()
         worker_pool.append(p)
 
@@ -280,4 +281,3 @@ if __name__ == "__main__":
 
     # Allow time to view results before program terminates.
     a = input("Finished")  # raw_input(...) in Python 2.
-

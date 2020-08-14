@@ -1,3 +1,10 @@
+# add the path ../ to import functions from the Pedestron module
+sys.path.append("../")
+sys.path.append("./")
+
+from Pedestron.mmdet.apis import init_detector, inference_detector
+from Tools.scene_detection_30kcams import SceneDetectionClass
+from Tools.database_iterator_30kcams import database_iterator
 import json
 import argparse
 import numpy as np
@@ -6,13 +13,6 @@ import torch
 import glob
 import sys
 
-# add the path ../ to import functions from the Pedestron module
-sys.path.append("../")
-sys.path.append("./")
-
-from Tools.database_iterator_30kcams import database_iterator
-from Tools.scene_detection_30kcams import SceneDetectionClass
-from Pedestron.mmdet.apis import init_detector, inference_detector
 
 def all_same(i, image_link):
     if len(image_link) >= 4:
@@ -28,10 +28,10 @@ def all_same(i, image_link):
         img3 = np.array(i.get_image(img3).convert('RGB'))
         img4 = np.array(i.get_image(img4).convert('RGB'))
 
-        img1 = cv2.resize(img1, (224, 224), interpolation = cv2.INTER_AREA)
-        img2 = cv2.resize(img2, (224, 224), interpolation = cv2.INTER_AREA)
-        img3 = cv2.resize(img3, (224, 224), interpolation = cv2.INTER_AREA)
-        img4 = cv2.resize(img4, (224, 224), interpolation = cv2.INTER_AREA)
+        img1 = cv2.resize(img1, (224, 224), interpolation=cv2.INTER_AREA)
+        img2 = cv2.resize(img2, (224, 224), interpolation=cv2.INTER_AREA)
+        img3 = cv2.resize(img3, (224, 224), interpolation=cv2.INTER_AREA)
+        img4 = cv2.resize(img4, (224, 224), interpolation=cv2.INTER_AREA)
 
         diff1 = np.sum(img1 - img2)
         diff2 = np.sum(img3 - img4)
@@ -42,10 +42,13 @@ def all_same(i, image_link):
             return False
     return False
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='MMDet test detector')
-    parser.add_argument('--config', help='test config file path', default='Pedestron/configs/elephant/cityperson/cascade_hrnet.py')
-    parser.add_argument('--checkpoint', help='checkpoint file', default='Pedestron/pre_trained_models/epoch_19.pth.stu')
+    parser.add_argument('--config', help='test config file path',
+                        default='Pedestron/configs/elephant/cityperson/cascade_hrnet.py')
+    parser.add_argument('--checkpoint', help='checkpoint file',
+                        default='Pedestron/pre_trained_models/epoch_19.pth.stu')
     args = parser.parse_args()
 
     i = database_iterator()
@@ -61,7 +64,8 @@ if __name__ == "__main__":
     detections = dict()
     path = '/local/a/cam2/data/covid19/video_data/'
     count = 0
-    list_cams = ['h092zALqYg', '0369289ba3', '113644aeaa', 'Sm7vwNhHoV', 'h5SGg1wbzT', 'U7REmkvwZs', '1yY7h9xkXt', '4mKEIb96LV', 'OVZjQQIIYf']
+    list_cams = ['h092zALqYg', '0369289ba3', '113644aeaa', 'Sm7vwNhHoV',
+                 'h5SGg1wbzT', 'U7REmkvwZs', '1yY7h9xkXt', '4mKEIb96LV', 'OVZjQQIIYf']
 
     list_cams = [k + '/' for k in list_cams]
 
@@ -71,7 +75,7 @@ if __name__ == "__main__":
             print(foldername)
             detections[cam][foldername] = dict()
 
-            for :
+            for:
                 pil_image = (i.get_image(image_link[j]))
                 #img = cv2.imread(i.get_image(image_link[0]))
                 img = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)

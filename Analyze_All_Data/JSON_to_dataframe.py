@@ -12,11 +12,6 @@ sys.path.append("./")
 
 class Analyzer:
     def __init__(self):
-        # self.filename = 'all_data.csv'
-        # if path.exists(self.filename):
-        #     self.df = pd.read_csv(self.filename)
-        # else:
-
         self.df_person = pd.DataFrame(columns=(
             'date', 'cam_id', 'night', 'dense', 'type', 'place', 'pedestrian_count'))
 
@@ -191,20 +186,12 @@ class Analyzer:
             # build the data frame
             frames.append(pd.DataFrame.from_records(record))
             self.df_vehicles = pd.concat(frames, sort=False)
-            # self.df_vehicles.to_csv(obj+'_video.csv')
             self.df_vehicles.to_csv(save_path)
 
             # display head and tail
             print(self.df_vehicles.head(5))
             print(self.df_vehicles.tail(5))
             return
-
-    def plot_time_series(self):
-        """
-        @Todo: plot time series of each unique cam
-        :return: graph
-        """
-        pass
 
     def easy_plot(self, video_simple_results):
 
@@ -240,16 +227,14 @@ class Analyzer:
 
 if __name__ == "__main__":
 
-    """
-    example usage
+    # Example Usage
     """
     a = Analyzer()
-
-    image_dictionary = a.load_json('results/July8_419_vehicle_image.json')
-    dn_dictionary = a.load_json('results/July8_419_day_night.json')
-    obj = 'vehicle'
+    image_dictionary = a.load_json('results/July19_308_person_image.json')
+    dn_dictionary = a.load_json('results/July19_308_day_night.json')
+    obj = 'person'
     cam_type = 'image'
-    filename = 'July8_419'
+    filename = 'July19_308'
     savedir = 'dataframes'
     conf_threshold = 0.3
 
@@ -282,5 +267,5 @@ if __name__ == "__main__":
         mini_image_results_people, mini_dn_dictionary = a.simplify_video_detections(
             mini_image_dictionary, day_night_dictionary=mini_dn_dictionary, conf_threshold=conf_threshold)
         a.add_results_df(mini_image_results_people, day_night_dict=mini_dn_dictionary,
-                         cam_type='video', obj=obj, filename=filename, savedir=savedir)
-    
+                         cam_type='video', obj=obj, filename=filename, savedir=savedir)    
+    """
