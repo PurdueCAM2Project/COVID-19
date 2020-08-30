@@ -26,6 +26,7 @@ python3 scatterplots.py --country=France --date1=='05-11 '
 
 results in this plot:
 
+<img width="599" alt="Screen Shot 2020-08-29 at 8 46 22 PM" src="https://user-images.githubusercontent.com/42527012/91648804-d40eda00-ea39-11ea-9d83-5ddd9bfba295.png">
 
 
 
