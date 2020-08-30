@@ -1,5 +1,19 @@
 # Estimating worldwide social distancing during COVID-19 through Computer Vision
+### Generating Dataframes from Detection JSONs
+From the repo's $HOME folder:
 
+To generate Dataframes from a detection JSON when the day-night JSON is available:
+```
+python3 Analyze_All_Data/JSON_to_dataframe.py --image-json path_to_detection_JSON --day-night-json path_to_day_night_JSON --object person --cam-type image --savename filename_to_save --savedir directory_to_save_dataframes
+```
+
+The aforementioned command is valid when the object type concerned is people and the camera type concerned is video cameras. The object type can be changed to vehicles by changing the command line argument ```--object person``` to ```--object vehicle```. Likewise, the camera type can be changed by replacing ```--cam-type image``` with ```--cam-type video```.
+
+To generate Dataframes from a detection JSON when the day-night JSON is not available:
+```
+python3 Analyze_All_Data/JSON_to_dataframe.py --image-json path_to_detection_JSON --object person --cam-type image --savename filename_to_save --savedir directory_to_save_dataframes
+```
+To generate the dataframes for object type vehicles or camera type video, changes similar to the case when day-night JSON is available can be followed.
 
 ### Plotting Results
 In the Visualizations folder:
@@ -51,4 +65,3 @@ Brief description of algorithm:
   5. checking if this value is greater than 1.11 (6/5.4) determines the pairwise violation value
   
  <img width="1391" alt="Screen Shot 2020-08-29 at 8 56 09 PM" src="https://user-images.githubusercontent.com/42527012/91648818-133d2b00-ea3a-11ea-813b-b400f30c3c41.png">
-
