@@ -13,7 +13,7 @@ sys.path.append("./")
 
 
 """
-Convert a detection JSON to a dataframe.
+Convert a detection JSON to a dataframe with the day-night value.
 """
 
 class Analyzer:

@@ -1,6 +1,3 @@
-sys.path.append("../")
-sys.path.append("./")
-
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -9,7 +6,13 @@ import re
 from os import path, mkdir
 import numpy as np
 import sys
+import argparse
+sys.path.append("../")
+sys.path.append("./")
 
+"""
+Convert a detection JSON to a dataframe without the day-night value.
+"""
 
 class Analyzer:
     def __init__(self):
@@ -236,43 +239,27 @@ class Analyzer:
 
 if __name__ == "__main__":
 
-    # Example Usage
-    """
+    parser = argparse.ArgumentParser(description='Generate dataframe from detection JSON')
+    parser.add_argument('--image-json', type=str,
+                        help='path to JSON containing detected objects')
+    parser.add_argument('--object', type=str,
+                        help='object of interest. person or vehicle')
+    parser.add_argument('--cam-type', type=str,
+                        help='camera type of interest. image or video')
+    parser.add_argument('--savename', type=str,
+                        help='filename to save. File will be saved as savedir/filename_cam_type_obj.csv')
+    parser.add_argument('--savedir', type=str,
+                        help='directory to save dataframe.', required=False, default="daaframes")
+    args = parser.parse_args()
+    
     a = Analyzer()
-
-    image_dictionary = a.load_json(
-        'results/person_detections_MISSING_image_2400_2500')
-    obj = 'person'
-    cam_type = 'image'
-    filename = 'detections_MISSING_2400_2500'
-    savedir = 'dataframes'
+    image_dictionary = a.load_json(args.image_json)
+    obj = args.object
+    cam_type = args.cam_type
+    filename = args.savename
+    savedir = args.savedir
     conf_threshold = 0.3
 
-    common_keys = set(image_dictionary.keys())
-    bottleneck_n = len(common_keys)
-    if bottleneck_n == 0:
-        print("No keys in the image JSON")
-        print("Please check your data")
-        print("Exiting....")
-        sys.exit(0)
-
-    mini_image_dictionary = dict()
-
-    print(f"{bottleneck_n} keys present.")
-    for key in common_keys:
-        mini_image_dictionary[key] = image_dictionary[key]
-
-    if cam_type == 'image':
-        mini_image_results_people = a.simplify_image_results(
-            mini_image_dictionary, object_=obj, confidence_threshold=conf_threshold)
-        a.add_results_df(mini_image_results_people, cam_type='image',
-                         obj=obj, filename=filename, savedir=savedir)
-    elif cam_type == 'video':
-        mini_image_results_people = a.simplify_video_detections(
-            mini_image_dictionary, conf_threshold=conf_threshold)
-        a.add_results_df(mini_image_results_people, cam_type='video',
-                         obj=obj, filename=filename, savedir=savedir)
-    """
     a = Analyzer()
 
     image_dictionary = a.load_json(
