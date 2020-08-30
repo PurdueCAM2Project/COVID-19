@@ -2,7 +2,7 @@
 
 
 ### Plotting Results
-In the Violations folder:
+In the Visualizations folder:
 
 To plot scatterplots of a country or US state:
 
