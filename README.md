@@ -1,4 +1,4 @@
-# COVID-19
+# Estimating worldwide social distancing during COVID-19 through Computer Vision
 
 
 ### Plotting Results
