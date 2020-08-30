@@ -7,7 +7,7 @@ To generate Dataframes from a detection JSON when the day-night JSON is availabl
 python3 Analyze_All_Data/JSON_to_dataframe.py --image-json path_to_detection_JSON --day-night-json path_to_day_night_JSON --object person --cam-type image --savename filename_to_save --savedir directory_to_save_dataframes
 ```
 
-The aforementioned command is valid when the object type concerned is people and the camera type concerned is video cameras. The object type can be changed to vehicles by changing the command line argument ```--object person``` to ```--object vehicle```. Likewise, the camera type can be changed by replacing ```--cam-type image``` with ```cam-type video```.
+The aforementioned command is valid when the object type concerned is people and the camera type concerned is video cameras. The object type can be changed to vehicles by changing the command line argument ```--object person``` to ```--object vehicle```. Likewise, the camera type can be changed by replacing ```--cam-type image``` with ```--cam-type video```.
 
 To generate Dataframes from a detection JSON when the day-night JSON is not available:
 ```
