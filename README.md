@@ -7,21 +7,21 @@ In the Violations folder:
 To plot scatterplots of a country or US state:
 
 ```
-python3 --country=country_name
-python3 --state=US_state_name
+python3 scatterplots.py --country=country_name
+python3 scatterplots.py --state=US_state_name
 ```
 
 To include color coded date ranges (currently supports up to 5 date intervals):
 
 ```
-python3 --country=country_name --date1=='MM_DD ', --date2='MM_DD '
+python3 scatterplots.py --country=country_name --date1=='MM_DD ', --date2='MM_DD '
 ```
 
 Dates must be in the format 'MM_DD_' including the trailing space. 
 
 For example, 
 ```
-python3 --country=France --date1=='05-11 '
+python3 scatterplots.py --country=France --date1=='05-11 '
 ```
 
 results in this plot:
