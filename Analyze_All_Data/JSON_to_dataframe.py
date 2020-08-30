@@ -6,9 +6,15 @@ import re
 from os import path, mkdir
 import numpy as np
 import sys
+import argparse
+
 sys.path.append("../")
 sys.path.append("./")
 
+
+"""
+Convert a detection JSON to a dataframe.
+"""
 
 class Analyzer:
     def __init__(self):
@@ -227,15 +233,28 @@ class Analyzer:
 
 if __name__ == "__main__":
 
-    # Example Usage
-    """
+    parser = argparse.ArgumentParser(description='Generate dataframe from detection JSON')
+    parser.add_argument('--image-json', type=str,
+                        help='path to JSON containing detected objects')
+    parser.add_argument('--day-night-json', type=str,
+                        help='path to JSON containing day-night values')
+    parser.add_argument('--object', type=str,
+                        help='object of interest. person or vehicle')
+    parser.add_argument('--cam-type', type=str,
+                        help='camera type of interest. image or video')
+    parser.add_argument('--savename', type=str,
+                        help='filename to save. File will be saved as savedir/filename_cam_type_obj.csv')
+    parser.add_argument('--savedir', type=str,
+                        help='directory to save dataframe.', required=False, default="daaframes")
+    args = parser.parse_args()
+    
     a = Analyzer()
-    image_dictionary = a.load_json('results/July19_308_person_image.json')
-    dn_dictionary = a.load_json('results/July19_308_day_night.json')
-    obj = 'person'
-    cam_type = 'image'
-    filename = 'July19_308'
-    savedir = 'dataframes'
+    image_dictionary = a.load_json(args.image_json)
+    dn_dictionary = a.load_json(args.day_night_json)
+    obj = args.object
+    cam_type = args.cam_type
+    filename = args.savename
+    savedir = args.savedir
     conf_threshold = 0.3
 
     image_keys = set(image_dictionary.keys())
@@ -268,4 +287,3 @@ if __name__ == "__main__":
             mini_image_dictionary, day_night_dictionary=mini_dn_dictionary, conf_threshold=conf_threshold)
         a.add_results_df(mini_image_results_people, day_night_dict=mini_dn_dictionary,
                          cam_type='video', obj=obj, filename=filename, savedir=savedir)    
-    """
