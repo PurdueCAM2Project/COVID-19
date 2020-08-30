@@ -25,7 +25,6 @@ def get_count(df, mask, key):
 def ungroup(df, values, col):
     df_masks = {}
     cols = {col: np.max}
-    # df2 = df.groupby("date").agg(cols).reset_index()
     cam_ids = np.array(df["cam_id"])
 
     length = None
@@ -177,7 +176,7 @@ def visualize(ax, place_to_use, short_form, useful_dates, colap_vehicle=None, co
             end_samples.append(min(7 * (i + 1), data_points))
 
         for i in range(n_weeks):
-            # uncomment the first one if you want dates of the form startdate-enddate
+            # uncomment the commented code and comment the uncommented one if you want dates of the form startdate-enddate
             # The uncommented part now makes dates of the form startdate
 
             # plot_dates.append(np.array(useful_data[start_samples[i]:start_samples[i]+1]["date_keys"])[

@@ -119,7 +119,6 @@ class Analyzer:
                 for date in d[cam_id]:
                     d[cam_id][date] = d[cam_id][date]/largest_value
             except ValueError:
-                # largest_value = float('inf')
                 for date in d[cam_id]:
                     d[cam_id][date] = 0
         return d
@@ -165,7 +164,6 @@ class Analyzer:
             # build the data frame
             frames.append(pd.DataFrame.from_records(record))
             self.df_person = pd.concat(frames, sort=False)
-            # self.df_person.to_csv(obj+'_image.csv')
             self.df_person.to_csv(save_path)
 
             # display head and tail
@@ -230,7 +228,6 @@ class Analyzer:
             for image_name in d[cam_id]:
                 counts[image_name] = 0
                 for detection in d[cam_id][image_name]:
-                    # if float(detection) > 0.3:
                     counts[image_name] += 1
             all_counts[cam_id] = counts
 
