@@ -257,16 +257,6 @@ if __name__ == "__main__":
     savedir = args.savedir
     conf_threshold = 0.3
 
-    a = Analyzer()
-
-    image_dictionary = a.load_json(
-        'results/person_detections_MISSING_image_2400_2500')
-    obj = 'person'
-    cam_type = 'image'
-    filename = 'detections_MISSING_2400_2500'
-    savedir = 'dataframes'
-    conf_threshold = 0.3
-
     common_keys = set(image_dictionary.keys())
     bottleneck_n = len(common_keys)
     if bottleneck_n == 0:
