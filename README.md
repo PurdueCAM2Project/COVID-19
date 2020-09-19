@@ -70,9 +70,15 @@ Brief description of algorithm:
 ### Collecting raw detection data
 
 Create a set of cronjobs to call a bash script to call the following python files, or run these in the background at your convenience on a machine with GPU: 
-  detect_cars_image_cams.py
+  '''
+  detect_cars_image_cams.py 
   detect_people_image_cams.py
   detect_people_video_cams.py
+  '''
+  
+Specify pathname with all downloaded data, or alternatively, a list of cameras (camera IDs separated by newline). Optionally specify start and stop indices to limit number of cameras. Car detection script runs by downloading data from Vision server, i.e. http://vision.cs.luc.edu/~cv/videos/ and http://vision.cs.luc.edu/~cv/images/. People detection script runs locally on Argonne, but can be modified to match the car detection script. Output is saved as JSON as specified at the end of each file. 
+
+  
   
   
  
