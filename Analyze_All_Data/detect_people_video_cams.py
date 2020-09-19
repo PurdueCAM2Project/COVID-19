@@ -26,15 +26,25 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run person detections on all videos')
     parser.add_argument('--config', help='test config file path', default='Pedestron/configs/elephant/cityperson/cascade_hrnet.py')
     parser.add_argument('--checkpoint', help='checkpoint file', default='Pedestron/models_pretrained/epoch_19.pth.stu')
-    parser.add_argument('--path', help = 'path to videos', default='/projects/SE_HPC/video_frames/')
-    parser.add_argument('--start_index', required=True, type=int)
-    parser.add_argument('--end_index', required=True, type=int)
-    args = parser.parse_args()
+    parser.add_argument('--path', help = 'path to videos', default='/projects/SE_HPC/covid-images/')
+    parser.add_argument('--start_index', required=False, type=int)
+    parser.add_argument('--end_index', required=False, type=int)
+    parser.add_argument('--cam_list_file', required=False, type=str)
     
-    beach_file = open('done_vidcams.txt', 'r')
-    lines = beach_file.read().split('\n')
-    beaches = lines
-    print(beaches)
+    if args.cam_list_file:
+        people_6k = open('keys_people.txt', 'r')
+        lines = people_6k.read().split('\n')
+        todolist = lines
+    
+    elif path:
+        list_cams = os.listdir(path)
+        list_cams = [k + '/' for k in list_cams]
+        todolist = list_cams
+
+    if args.start_index and args.end_index:
+        start_index = args.start_index
+        end_index = args.end_index
+        todolist = todolist[start_index:end_index]
 
     model = init_detector(
         args.config, args.checkpoint, device=torch.device('cuda:0'))
@@ -43,25 +53,10 @@ if __name__ == "__main__":
 
     count = 0
 
-    list_cams = os.listdir(path)
-
-    
-    list_cams = [k + '/' for k in list_cams]
-    text_file = open('done.txt', 'r')
-    lines = text_file.read().split('\n')
-    done = lines
-    if done == None:
-        done = []
-    text_file.close()
-   
     detections = dict()
     day_night = dict()
-    start_index = args.start_index
-    end_index = args.end_index
 
-    downloaded_beach_cams = [i for i in list_cams if i not in beaches]
-    print(len(downloaded_beach_cams))
-    for cam in downloaded_beach_cams[start_index:end_index]:
+    for cam in todolist:
         #if cam not in done:
         count+=1
         print(count)

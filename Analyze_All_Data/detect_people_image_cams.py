@@ -27,17 +27,25 @@ if __name__ == "__main__":
     parser.add_argument('--config', help='test config file path', default='Pedestron/configs/elephant/cityperson/cascade_hrnet.py')
     parser.add_argument('--checkpoint', help='checkpoint file', default='Pedestron/models_pretrained/epoch_19.pth.stu')
     parser.add_argument('--path', help = 'path to videos', default='/projects/SE_HPC/covid-images/')
-    parser.add_argument('--start_index', required=True, type=int)
-    parser.add_argument('--end_index', required=True, type=int)
+    parser.add_argument('--start_index', required=False, type=int)
+    parser.add_argument('--end_index', required=False, type=int)
+    parser.add_argument('--cam_list_file', required=False, type=str)
     args = parser.parse_args()
     
-    people_6k = open('keys_people.txt', 'r')
-    lines = people_6k.read().split('\n')
-    
-    people6k = lines
-    already_done = open('done_image_cams.txt', 'r')
-    lines = already_done.read().split('\n')
-    alreadydone = lines
+    if args.cam_list_file:
+	    people_6k = open('keys_people.txt', 'r')
+	    lines = people_6k.read().split('\n')
+	    todolist = lines
+	
+	elif path:
+	    list_cams = os.listdir(path)
+	    list_cams = [k + '/' for k in list_cams]
+	    todolist = list_cams
+
+	if args.start_index and args.end_index:
+	    start_index = args.start_index
+	    end_index = args.end_index
+	    todolist = todolist[start_index:end_index]
 
     model = init_detector(
         args.config, args.checkpoint, device=torch.device('cuda:0'))
@@ -46,20 +54,11 @@ if __name__ == "__main__":
 
     count = 0
 
-    list_cams = os.listdir(path)
-    list_cams = [k + '/' for k in list_cams]
-
     detections = dict()
     day_night = dict()
-    
-    start_index = args.start_index
-    end_index = args.end_index
-    
- 
-    print(list_cams[start_index:end_index])
-    do_these = [i for i in people6k if i not in alreadydone]
 
-    for cam in people6k[start_index:end_index]:
+	    
+    for cam in todolist:
         #if cam not in done:
         count+=1
         print(count)
