@@ -65,3 +65,14 @@ Brief description of algorithm:
   5. checking if this value is greater than 1.11 (6/5.4) determines the pairwise violation value
   
  <img width="1391" alt="Screen Shot 2020-08-29 at 8 56 09 PM" src="https://user-images.githubusercontent.com/42527012/91648818-133d2b00-ea3a-11ea-813b-b400f30c3c41.png">
+
+
+### Collecting raw detection data
+
+Create a set of cronjobs to call a bash script to call the following python files, or run these in the background at your convenience on a machine with GPU: 
+  detect_cars_image_cams.py
+  detect_people_image_cams.py
+  detect_people_video_cams.py
+  
+  
+ 
