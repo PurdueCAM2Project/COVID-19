@@ -98,8 +98,6 @@ if __name__ == "__main__":
                 img = np.array(i.get_image(image_link).convert('RGB'))
                 results = vehicle_detector.detect(img, view_img=False)
                 detections[foldername][image_link] = results
-                if j%20==19:
-                    print(f"{j+1} done out of {len(image_links)} images")
 
             f = open(filename, "w+")
             # write to the file at the end of every camera instead of when the entire process is complete
