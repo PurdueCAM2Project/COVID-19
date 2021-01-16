@@ -44,6 +44,13 @@ def all_same(i, image_link):
             return False
     return False
 
+def determine_day_night(image):  # determines whether or not an image is captured during the day or night
+    # 0 denotes night, 1 denotes day
+    return np.mean(image)
+    #if np.mean(image) > 60:
+        # this image was taken during the day
+     #   return 1
+    #return 0
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='YOLO People Detector')
@@ -66,9 +73,14 @@ if __name__ == "__main__":
                         help='device id (i.e. 0 or 0,1) or cpu')
     parser.add_argument('--save-path', default='results',
                         help='directory to save results')                        
+    parser.add_argument('--filename', default='filename',
+                        help='filename to read data from')
+    parser.add_argument('--month',type=int)
+
     args = parser.parse_args()
     args.cfg = check_file(args.cfg)  # check file
     args.names = check_file(args.names)  # check file
+    file_to_read = args.filename
     print("Yolo for vehicle detection configuration:")
     print(args)
     directory_exists = os.path.isdir(args.save_path)
@@ -82,11 +94,18 @@ if __name__ == "__main__":
                                         conf_thres=args.conf_thres, imgsz=args.img_size, half=args.half, device_id=args.device)
 
     detections = dict()
-
+    day_night = dict()
     count = 0
-    filename = os.path.join(args.save_path, "vehicle_detections.json")
-    for foldername, image_links, time in i.get_all_images():
+    text_file = open(file_to_read, 'r')
+    lines = text_file.read().split('\n')
+    cam_l = lines
+    print(cam_l)
+    #cam_l = [i + '/' for i in cam_l]
+    filename = os.path.join(args.save_path, file_to_read + "_after_" + str(args.month) + ".json")
+    for foldername, image_links, time in i.get_subset_images(cam_list=cam_l):
         detections[foldername] = dict()
+        day_night[foldername] = dict()
+        print('foldername')
         print(foldername, image_links[:1])
         check = all_same(i, image_links)
         print(f"number of images in this camera:\t{len(image_links)}")
@@ -95,10 +114,23 @@ if __name__ == "__main__":
         if len(image_links) > 0 and not check:
             for j in range(len(image_links)):
                 image_link = image_links[j]
-                img = np.array(i.get_image(image_link).convert('RGB'))
+                month = int(image_link[91:93])
+                day = int(image_link[94:96])
+                if not (month==args.month):
+                    continue
+                print(month, day)
+                try:
+                    img = np.array(i.get_image(image_link).convert('RGB'))
+                except:
+                    print('in exception')
+                    continue
+                print(image_link)
+                
                 results = vehicle_detector.detect(img, view_img=False)
                 detections[foldername][image_link] = results
-
+              
+                if j%20==19:
+                    print(f"{j+1} done out of {len(image_links)} images")
             f = open(filename, "w+")
             # write to the file at the end of every camera instead of when the entire process is complete
             # Helps if it gets disconnected in between
@@ -106,4 +138,6 @@ if __name__ == "__main__":
             f.close()
             count += 1
             print(f"{count} out of {i.numcams} cameras done.")
+
+            
     print("Done")
