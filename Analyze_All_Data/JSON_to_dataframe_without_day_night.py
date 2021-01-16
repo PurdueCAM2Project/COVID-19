@@ -98,14 +98,11 @@ class Analyzer:
             simplified_dict[cam_id] = dict()
             for img_url in image_dict[cam_id]:
                 detections = image_dict[cam_id][img_url]
-                if object_ != 'person':
-                    count = len(detections.keys())
-                else:
-                    count = 0
-                    confidences = list(detections.keys())
-                    for confidence in confidences:
-                        if float(confidence) > confidence_threshold:
-                            count += 1
+                count = 0
+                confidences = list(detections.keys())
+                for confidence in confidences:
+                    if float(confidence) > confidence_threshold:
+                        count += 1
                 simplified_dict[cam_id][img_url] = count
         return simplified_dict
 
